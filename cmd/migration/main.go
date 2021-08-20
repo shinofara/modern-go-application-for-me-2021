@@ -2,13 +2,19 @@ package main
 
 import (
 	"context"
+	"flag"
 	"github.com/go-sql-driver/mysql"
 	"mygo/ent"
 	"mygo/ent/migrate"
 	"log"
+	"os"
 )
 
 func main() {
+	var dryrun bool
+	flag.BoolVar(&dryrun, "dryrun", true, "dryrun")
+	flag.Parse()
+
 	entOptions := []ent.Option{}
 
 	// 発行されるSQLをロギングするなら
@@ -30,7 +36,20 @@ func main() {
 	}
 	defer client.Close()
 	ctx := context.Background()
-	if err := client.Schema.Create(ctx, migrate.WithForeignKeys(false)); err != nil {
+
+	if dryrun {
+		if err := client.Schema.WriteTo(ctx, os.Stdout, migrate.WithForeignKeys(false)); err != nil {
+			log.Fatalf("failed printing schema changes: %v", err)
+		}
+		os.Exit(0)
+	}
+
+	if err := client.Schema.Create(
+		ctx,
+		migrate.WithForeignKeys(false),
+		migrate.WithDropIndex(true),
+		migrate.WithDropColumn(true),
+	); err != nil {
 		log.Fatalf("failed printing schema changes: %v", err)
 	}
 	log.Print("ent sample done.")
