@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+
+  app:
+    build:
+      context: .
+    working_dir: /work
+    volumes:
+    - .:/work
+    command: ["make", "run"]
+    ports:
+      - 8080:8080
