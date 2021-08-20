@@ -5,10 +5,10 @@ services:
     image: mysql:5.7
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d
+      MYSQL_DATABASE: example
     ports:
       - 3306:3306
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
 
   migration:
     build:
