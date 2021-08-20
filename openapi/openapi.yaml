@@ -1,0 +1,49 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Example API
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  description: Example
+  contact:
+    name: Example
+tags:
+  - name: todo
+    description: todo
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /todo:
+    post:
+      tags:
+        - todo
+      summary: todoを登録する
+      description: add new todo
+      operationId: todo
+      requestBody:
+        description: todo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/todo'
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todo'
+
+components:
+  schemas:
+    todo:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        name:
+          type: string
