@@ -9,7 +9,6 @@ import (
 
 func main() {
 	r := chi.NewRouter()
-
 	mux := &handler.Handler{}
 	oapi.HandlerFromMux(mux, r)
 	s := &http.Server{
