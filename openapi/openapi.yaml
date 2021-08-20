@@ -15,6 +15,16 @@ servers:
   - url: 'http://localhost:8080'
 paths:
   /todo:
+    get:
+      tags:
+        - todo
+      responses:
+        '200':
+          description: response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/todo'
     post:
       tags:
         - todo
