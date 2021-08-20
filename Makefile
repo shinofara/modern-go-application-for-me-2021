@@ -4,3 +4,12 @@ oapi-generate:
 
 run:
 	go run github.com/cosmtrek/air -c .air.toml
+
+init:
+	go install github.com/facebook/ent/cmd/entc@latest
+
+model:
+	go generate ./ent
+
+migrate:
+	docker compose run --rm migration

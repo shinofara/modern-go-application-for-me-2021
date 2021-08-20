@@ -10,6 +10,14 @@ services:
     ports:
       - 3306:3306
 
+  migration:
+    build:
+      context: .
+    working_dir: /work
+    volumes:
+      - .:/work
+    entrypoint: ["go", "run", "cmd/migration/main.go"]
+
   app:
     build:
       context: .
