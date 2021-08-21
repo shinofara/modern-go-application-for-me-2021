@@ -25,7 +25,7 @@ func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := usecase.Signup(ctx, h.DB, h.Mailer, &p); err != nil {
+	if err := usecase.Signup(ctx, &usecase.ServiceLocator{DB: h.DB, Mailer:h.Mailer}, &p); err != nil {
 		log.Println(err)
 		fmt.Fprint(w, err)
 		return

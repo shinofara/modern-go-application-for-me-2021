@@ -7,8 +7,13 @@ import (
 	"mygo/interfaces"
 )
 
-func Signup(ctx context.Context, db *ent.Client, mailer interfaces.MailerInterface,p *oapi.Signup) error {
-	uc := db.User.Create()
+type ServiceLocator struct {
+	DB *ent.Client
+	Mailer interfaces.MailerInterface
+}
+
+func Signup(ctx context.Context, sl *ServiceLocator,p *oapi.Signup) error {
+	uc := sl.DB.User.Create()
 	uc.SetName(p.Name)
 
 	u, err := uc.Save(ctx)
@@ -16,11 +21,11 @@ func Signup(ctx context.Context, db *ent.Client, mailer interfaces.MailerInterfa
 		return err
 	}
 
-	ac := db.Auth.Create().SetEmail(p.Email).SetPassword(p.Password).SetUser(u)
+	ac := sl.DB.Auth.Create().SetEmail(p.Email).SetPassword(p.Password).SetUser(u)
 	_, err = ac.Save(ctx)
 	if err != nil {
 		return err
 	}
 
-	return mailer.Send(p.Email, "Hello")
+	return sl.Mailer.Send(p.Email, "Hello")
 }
