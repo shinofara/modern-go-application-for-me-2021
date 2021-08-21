@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"log"
 	"mygo/ent"
+	"mygo/interfaces"
 	"net/http"
 )
 
 type Handler struct {
 	DB *ent.Client
+	Mailer interfaces.MailerInterface
 }
 
 func (h Handler) GetTodo(w http.ResponseWriter, r *http.Request) {

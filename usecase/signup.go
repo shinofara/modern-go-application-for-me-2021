@@ -4,9 +4,10 @@ import (
 	"context"
 	"mygo/ent"
 	oapi "mygo/http/openapi"
+	"mygo/interfaces"
 )
 
-func Signup(ctx context.Context, db *ent.Client, p *oapi.Signup) error {
+func Signup(ctx context.Context, db *ent.Client, mailer interfaces.MailerInterface,p *oapi.Signup) error {
 	uc := db.User.Create()
 	uc.SetName(p.Name)
 
@@ -17,6 +18,9 @@ func Signup(ctx context.Context, db *ent.Client, p *oapi.Signup) error {
 
 	ac := db.Auth.Create().SetEmail(p.Email).SetPassword(p.Password).SetUser(u)
 	_, err = ac.Save(ctx)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return mailer.Send(p.Email, "Hello")
 }
