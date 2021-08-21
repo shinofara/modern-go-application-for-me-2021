@@ -1,6 +1,6 @@
 oapi-generate:
-	oapi-codegen -generate types -package oapi openapi.yaml > http/openapi/types.gen.go
-	oapi-codegen -generate chi-server -package oapi openapi.yaml > http/openapi/server.gen.go
+	oapi-codegen -generate types -package oapi openapi.yaml > http/oapi/types.gen.go
+	oapi-codegen -generate chi-server -package oapi openapi.yaml > http/oapi/server.gen.go
 
 run: migrate
 	docker compose up app

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"mygo/ent/auth"
-	oapi "mygo/http/openapi"
+	oapi "mygo/http/oapi"
 	"net/http"
 )
 

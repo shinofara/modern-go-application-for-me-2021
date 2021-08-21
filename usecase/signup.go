@@ -2,29 +2,10 @@ package usecase
 
 import (
 	"context"
-	"go.uber.org/dig"
-	"mygo/ent"
-	oapi "mygo/http/openapi"
-	"mygo/infrastructure/mailer"
+	"mygo/http/oapi"
 )
 
-type UseCase struct {
-	DB     *ent.Client
-	Mailer mailer.MailerInterface
-}
-
-func NewUseCase(p struct{
-	dig.In
-
-	DB     *ent.Client
-	Mailer mailer.MailerInterface
-}) *UseCase {
-	return &UseCase{
-		DB:     p.DB,
-		Mailer: p.Mailer,
-	}
-}
-
+// Signup ユーザ登録時に利用
 func (u *UseCase) Signup(ctx context.Context, p *oapi.Signup) error {
 	uc := u.DB.User.Create()
 	uc.SetName(p.Name)

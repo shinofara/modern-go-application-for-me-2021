@@ -7,7 +7,7 @@ import (
 	"mygo/config"
 	"mygo/ent"
 	"mygo/http/handler"
-	oapi "mygo/http/openapi"
+	oapi "mygo/http/oapi"
 	"mygo/infrastructure/database"
 	"mygo/infrastructure/mailer"
 	"mygo/usecase"
