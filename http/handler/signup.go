@@ -43,7 +43,6 @@ func (h *Handler) PostSignin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	a, err := h.DB.Auth.Query().Where(auth.Email(p.Email), auth.Password(p.Password)).Only(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
