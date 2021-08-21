@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/dig"
 	"log"
+	"mygo/ent"
 	"mygo/http/handler"
 	oapi "mygo/http/openapi"
 	"github.com/go-sql-driver/mysql"
@@ -30,23 +31,31 @@ func dsn() string {
 }
 
 func main() {
-	db := database.Open(dsn())
-	defer db.Close()
+	provides := []interface{}{
+		interfaces.NewDummyMailer,
+		handler.NewHandler,
+		database.Open,
+		dsn,
+	}
 
 	container := dig.New()
-	err := container.Provide(interfaces.NewDummyMailer)
-	log.Println(err)
-	err = container.Provide(handler.NewHandler)
-	log.Println(err)
-	err = container.Provide(database.Open)
-	log.Println(err)
-	err = container.Provide(dsn)
-	log.Println(err)
-	err = container.Invoke(Server)
-	log.Println(err)
+	for _, p := range provides {
+		if err := container.Provide(p); err != nil {
+			panic(err)
+		}
+	}
+
+	if err := container.Invoke(Server); err != nil {
+		panic(err)
+	}
 }
 
-func Server(mux handler.Handler) error {
+func Server(mux handler.Handler, db *ent.Client) error {
+	defer func() {
+		db.Close()
+		log.Println("DB Close")
+	}()
+
 	r := chi.NewRouter()
 	oapi.HandlerFromMux(&mux, r)
 	s := &http.Server{

@@ -14,7 +14,6 @@ type Handler struct {
 }
 
 func NewHandler(db *ent.Client, mailer interfaces.MailerInterface) Handler {
-	log.Println("NewHandler")
 	return Handler{
 		DB: db,
 		Mailer: mailer,
