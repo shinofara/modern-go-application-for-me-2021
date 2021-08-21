@@ -1,0 +1,7 @@
+db:
+  user: root
+  passwd:
+  net: tcp
+  host: db
+  port: 3306
+  db_name: example

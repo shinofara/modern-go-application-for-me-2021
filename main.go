@@ -1,44 +1,39 @@
 package main
 
 import (
+	"flag"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/dig"
 	"log"
+	"mygo/config"
 	"mygo/ent"
 	"mygo/http/handler"
 	oapi "mygo/http/openapi"
-	"github.com/go-sql-driver/mysql"
 	"mygo/infrastructure/database"
 	"mygo/interfaces"
 
 	"net/http"
 )
 
-
-func dsn() string {
-	// サンプルなのでここにハードコーディングしてます。
-	mc := mysql.Config{
-		User:                 "root",
-		Passwd:               "",
-		Net:                  "tcp",
-		Addr:                 "db" + ":" + "3306",
-		DBName:               "example",
-		AllowNativePasswords: true,
-		ParseTime:            true,
-	}
-
-	return mc.FormatDSN()
-}
-
 func main() {
+	var configPath string
+	flag.StringVar(&configPath, "config", "", "path to config yaml path")
+	flag.Parse()
+
 	provides := []interface{}{
 		interfaces.NewDummyMailer,
 		handler.NewHandler,
 		database.Open,
-		dsn,
+		config.DB,
 	}
 
 	container := dig.New()
+	if err := container.Provide(func() (*config.Config, error) {
+		return config.New(configPath)
+	}); err != nil {
+		panic(err)
+	}
+
 	for _, p := range provides {
 		if err := container.Provide(p); err != nil {
 			panic(err)

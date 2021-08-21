@@ -3,14 +3,22 @@ package database
 import (
 	"context"
 	"contrib.go.opencensus.io/integrations/ocsql"
+	"database/sql"
 	"database/sql/driver"
 	"entgo.io/ent/dialect"
-	"database/sql"
-
+	entsql "entgo.io/ent/dialect/sql"
 	"github.com/go-sql-driver/mysql"
 	"mygo/ent"
-	entsql "entgo.io/ent/dialect/sql"
 )
+
+type Config struct {
+	User string
+	Passwd string
+	Net string
+	Host string
+	Port string
+	DBName string `yaml:"db_name"`
+}
 
 type connector struct {
 	dsn string
@@ -31,8 +39,19 @@ func (connector) Driver() driver.Driver {
 }
 
 // Open new connection and start stats recorder.
-func Open(dsn string) *ent.Client {
-	db := sql.OpenDB(connector{dsn})
+func Open(cfg *Config) *ent.Client {
+	mc := mysql.Config{
+		User:                 cfg.User,
+		Passwd:               cfg.Passwd,
+		Net:                  cfg.Net,
+		Addr:                 cfg.Host + ":" + cfg.Port,
+		DBName:               cfg.DBName,
+		AllowNativePasswords: true,
+		ParseTime:            true,
+	}
+
+
+	db := sql.OpenDB(connector{mc.FormatDSN()})
 	// Create an ent.Driver from `db`.
 	drv := entsql.OpenDB(dialect.MySQL, db)
 	return ent.NewClient(ent.Driver(drv))

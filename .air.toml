@@ -3,7 +3,7 @@ tmp_dir = "tmp"
 
 [build]
   bin = "./tmp/main"
-  full_bin = "./tmp/main"
+  full_bin = "./tmp/main --config environment/development/config.yml"
   cmd = "go build -race -o ./tmp/main ."
   delay = 1000
   exclude_dir = []
