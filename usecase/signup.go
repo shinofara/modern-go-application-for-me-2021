@@ -7,10 +7,16 @@ import (
 )
 
 func Signup(ctx context.Context, db *ent.Client, p *oapi.Signup) error {
-	u := db.User.Create()
-	u.SetEmail(p.Email).SetName(p.Name).SetPassword(p.Password)
-	if _, err := u.Save(ctx); err != nil {
+	uc := db.User.Create()
+	uc.SetName(p.Name)
+
+	u, err := uc.Save(ctx)
+	if err != nil {
 		return err
 	}
-	return nil
+
+	ac := db.Auth.Create().SetEmail(p.Email).SetPassword(p.Password).SetUser(u)
+	_, err = ac.Save(ctx)
+
+	return err
 }

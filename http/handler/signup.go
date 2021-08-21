@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"mygo/ent/user"
+	"mygo/ent/auth"
 	oapi "mygo/http/openapi"
 	"mygo/usecase"
 	"net/http"
@@ -43,7 +43,14 @@ func (h *Handler) PostSignin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := h.DB.User.Query().Where(user.Email(p.Email), user.Password(p.Password)).Only(ctx)
+
+	a, err := h.DB.Auth.Query().Where(auth.Email(p.Email), auth.Password(p.Password)).Only(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	u, err := a.QueryUser().Only(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

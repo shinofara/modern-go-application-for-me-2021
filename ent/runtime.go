@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"mygo/ent/auth"
 	"mygo/ent/schema"
 	"mygo/ent/todo"
 	"mygo/ent/user"
@@ -12,6 +13,16 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	authFields := schema.Auth{}.Fields()
+	_ = authFields
+	// authDescEmail is the schema descriptor for email field.
+	authDescEmail := authFields[0].Descriptor()
+	// auth.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	auth.EmailValidator = authDescEmail.Validators[0].(func(string) error)
+	// authDescPassword is the schema descriptor for password field.
+	authDescPassword := authFields[1].Descriptor()
+	// auth.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
+	auth.PasswordValidator = authDescPassword.Validators[0].(func(string) error)
 	todoFields := schema.Todo{}.Fields()
 	_ = todoFields
 	// todoDescTitle is the schema descriptor for title field.
@@ -20,16 +31,8 @@ func init() {
 	todo.TitleValidator = todoDescTitle.Validators[0].(func(string) error)
 	userFields := schema.User{}.Fields()
 	_ = userFields
-	// userDescEmail is the schema descriptor for email field.
-	userDescEmail := userFields[0].Descriptor()
-	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
-	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
-	// userDescPassword is the schema descriptor for password field.
-	userDescPassword := userFields[1].Descriptor()
-	// user.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
-	user.PasswordValidator = userDescPassword.Validators[0].(func(string) error)
 	// userDescName is the schema descriptor for name field.
-	userDescName := userFields[2].Descriptor()
+	userDescName := userFields[0].Descriptor()
 	// user.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	user.NameValidator = userDescName.Validators[0].(func(string) error)
 }

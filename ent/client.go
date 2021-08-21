@@ -9,11 +9,13 @@ import (
 
 	"mygo/ent/migrate"
 
+	"mygo/ent/auth"
 	"mygo/ent/todo"
 	"mygo/ent/user"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // Client is the client that holds all ent builders.
@@ -21,6 +23,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Auth is the client for interacting with the Auth builders.
+	Auth *AuthClient
 	// Todo is the client for interacting with the Todo builders.
 	Todo *TodoClient
 	// User is the client for interacting with the User builders.
@@ -38,6 +42,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Auth = NewAuthClient(c.config)
 	c.Todo = NewTodoClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -73,6 +78,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:    ctx,
 		config: cfg,
+		Auth:   NewAuthClient(cfg),
 		Todo:   NewTodoClient(cfg),
 		User:   NewUserClient(cfg),
 	}, nil
@@ -93,6 +99,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
 		config: cfg,
+		Auth:   NewAuthClient(cfg),
 		Todo:   NewTodoClient(cfg),
 		User:   NewUserClient(cfg),
 	}, nil
@@ -101,7 +108,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Todo.
+//		Auth.
 //		Query().
 //		Count(ctx)
 //
@@ -124,8 +131,115 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Auth.Use(hooks...)
 	c.Todo.Use(hooks...)
 	c.User.Use(hooks...)
+}
+
+// AuthClient is a client for the Auth schema.
+type AuthClient struct {
+	config
+}
+
+// NewAuthClient returns a client for the Auth from the given config.
+func NewAuthClient(c config) *AuthClient {
+	return &AuthClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `auth.Hooks(f(g(h())))`.
+func (c *AuthClient) Use(hooks ...Hook) {
+	c.hooks.Auth = append(c.hooks.Auth, hooks...)
+}
+
+// Create returns a create builder for Auth.
+func (c *AuthClient) Create() *AuthCreate {
+	mutation := newAuthMutation(c.config, OpCreate)
+	return &AuthCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Auth entities.
+func (c *AuthClient) CreateBulk(builders ...*AuthCreate) *AuthCreateBulk {
+	return &AuthCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Auth.
+func (c *AuthClient) Update() *AuthUpdate {
+	mutation := newAuthMutation(c.config, OpUpdate)
+	return &AuthUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AuthClient) UpdateOne(a *Auth) *AuthUpdateOne {
+	mutation := newAuthMutation(c.config, OpUpdateOne, withAuth(a))
+	return &AuthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AuthClient) UpdateOneID(id int) *AuthUpdateOne {
+	mutation := newAuthMutation(c.config, OpUpdateOne, withAuthID(id))
+	return &AuthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Auth.
+func (c *AuthClient) Delete() *AuthDelete {
+	mutation := newAuthMutation(c.config, OpDelete)
+	return &AuthDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *AuthClient) DeleteOne(a *Auth) *AuthDeleteOne {
+	return c.DeleteOneID(a.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *AuthClient) DeleteOneID(id int) *AuthDeleteOne {
+	builder := c.Delete().Where(auth.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AuthDeleteOne{builder}
+}
+
+// Query returns a query builder for Auth.
+func (c *AuthClient) Query() *AuthQuery {
+	return &AuthQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Auth entity by its id.
+func (c *AuthClient) Get(ctx context.Context, id int) (*Auth, error) {
+	return c.Query().Where(auth.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AuthClient) GetX(ctx context.Context, id int) *Auth {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a Auth.
+func (c *AuthClient) QueryUser(a *Auth) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(auth.Table, auth.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, auth.UserTable, auth.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AuthClient) Hooks() []Hook {
+	return c.hooks.Auth
 }
 
 // TodoClient is a client for the Todo schema.
