@@ -10,6 +10,7 @@ import (
 	oapi "mygo/http/openapi"
 	"mygo/infrastructure/database"
 	"mygo/infrastructure/mailer"
+	"mygo/usecase"
 	"os"
 	"os/signal"
 	"syscall"
@@ -30,11 +31,13 @@ func main() {
 		context.Background,
 		mailer.NewDummyMailer,
 		handler.NewHandler,
+		usecase.NewUseCase,
 		database.NewClient,
 		config.DB,
 	}
 
 	container := dig.New()
+
 	if err := container.Provide(func() (*config.Config, error) {
 		return config.New(configPath)
 	}); err != nil {
@@ -47,19 +50,26 @@ func main() {
 		}
 	}
 
+	// Provideに登録した依存を解決させて、Serverを実行
 	if err := container.Invoke(Server); err != nil {
 		panic(err)
 	}
 }
 
-func Server(ctx context.Context, mux handler.Handler, db *ent.Client) error {
+func Server(ctx context.Context, p struct{
+	dig.In
+
+	// Server起動時に利用する引数は可変の可能性がある為、struct化してDIにて注入
+	Mux handler.Handler
+	DB *ent.Client
+}) error {
 	defer func() {
-		db.Close()
+		p.DB.Close()
 		log.Println("DB Close")
 	}()
 
 	r := chi.NewRouter()
-	oapi.HandlerFromMux(&mux, r)
+	oapi.HandlerFromMux(&p.Mux, r)
 	srv := &http.Server{
 		Handler: r,
 		Addr:    "0.0.0.0:8080",

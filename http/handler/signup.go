@@ -6,15 +6,8 @@ import (
 	"log"
 	"mygo/ent/auth"
 	oapi "mygo/http/openapi"
-	"mygo/usecase"
 	"net/http"
 )
-
-type SignupRequest struct {
-	Email    string
-	Password string
-	Name     string
-}
 
 func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -25,7 +18,7 @@ func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := usecase.Signup(ctx, &usecase.ServiceLocator{DB: h.DB, Mailer: h.Mailer}, &p); err != nil {
+	if err := h.UseCase.Signup(ctx, &p); err != nil {
 		log.Println(err)
 		fmt.Fprint(w, err)
 		return
