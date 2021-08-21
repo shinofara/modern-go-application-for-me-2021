@@ -3,37 +3,32 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/go-sql-driver/mysql"
+	"log"
+	"mygo/config"
 	"mygo/ent"
 	"mygo/ent/migrate"
-	"log"
+	"mygo/infrastructure/database"
 	"os"
 )
 
 func main() {
 	var dryrun bool
+	var configPath string
 	flag.BoolVar(&dryrun, "dryrun", true, "dryrun")
+	flag.StringVar(&configPath, "config", "", "path to config yaml path")
 	flag.Parse()
 
 	entOptions := []ent.Option{}
 
 	// 発行されるSQLをロギングするなら
 	entOptions = append(entOptions, ent.Debug())
-	// サンプルなのでここにハードコーディングしてます。
-	mc := mysql.Config{
-		User:                 "root",
-		Passwd:               "",
-		Net:                  "tcp",
-		Addr:                 "db" + ":" + "3306",
-		DBName:               "example",
-		AllowNativePasswords: true,
-		ParseTime:            true,
+
+	cfg, err := config.New(configPath)
+	if err != nil {
+		panic(err)
 	}
 
-	client, err := ent.Open("database", mc.FormatDSN(), entOptions...)
-	if err != nil {
-		log.Fatalf("failed opening connection to postgres: %v", err)
-	}
+	client := database.NewClient(&cfg.DB)
 	defer client.Close()
 	ctx := context.Background()
 

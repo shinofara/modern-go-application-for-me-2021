@@ -39,7 +39,7 @@ func (connector) Driver() driver.Driver {
 }
 
 // Open new connection and start stats recorder.
-func Open(cfg *Config) *ent.Client {
+func NewClient(cfg *Config) *ent.Client {
 	mc := mysql.Config{
 		User:                 cfg.User,
 		Passwd:               cfg.Passwd,

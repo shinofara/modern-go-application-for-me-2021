@@ -17,12 +17,6 @@ type ServerInterface interface {
 
 	// (POST /signup)
 	PostSignup(w http.ResponseWriter, r *http.Request)
-
-	// (GET /todo)
-	GetTodo(w http.ResponseWriter, r *http.Request)
-	// todoを登録する
-	// (POST /todo)
-	Todo(w http.ResponseWriter, r *http.Request)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -54,36 +48,6 @@ func (siw *ServerInterfaceWrapper) PostSignup(w http.ResponseWriter, r *http.Req
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostSignup(w, r)
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler(w, r.WithContext(ctx))
-}
-
-// GetTodo operation middleware
-func (siw *ServerInterfaceWrapper) GetTodo(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetTodo(w, r)
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler(w, r.WithContext(ctx))
-}
-
-// Todo operation middleware
-func (siw *ServerInterfaceWrapper) Todo(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.Todo(w, r)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -135,12 +99,6 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/signup", wrapper.PostSignup)
-	})
-	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/todo", wrapper.GetTodo)
-	})
-	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/todo", wrapper.Todo)
 	})
 
 	return r

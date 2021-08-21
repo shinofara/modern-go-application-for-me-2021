@@ -9,8 +9,8 @@ info:
   contact:
     name: Example
 tags:
-  - name: todo
-    description: todo
+  - name: user
+    description: user
 servers:
   - url: 'http://localhost:8080'
 paths:
@@ -38,37 +38,6 @@ paths:
       responses:
         '200':
           description: response
-  /todo:
-    get:
-      tags:
-        - todo
-      responses:
-        '200':
-          description: response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/todo'
-    post:
-      tags:
-        - todo
-      summary: todoを登録する
-      description: add new todo
-      operationId: todo
-      requestBody:
-        description: todo
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/todo'
-      responses:
-        '200':
-          description: response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/todo'
 
 components:
   schemas:
@@ -95,12 +64,3 @@ components:
         - email
         - password
         - name
-    todo:
-      type: object
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        name:
-          type: string

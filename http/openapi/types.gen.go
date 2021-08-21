@@ -16,28 +16,15 @@ type Signup struct {
 	Password string `json:"password"`
 }
 
-// Todo defines model for todo.
-type Todo struct {
-	Description *string `json:"description,omitempty"`
-	Name        *string `json:"name,omitempty"`
-	Title       *string `json:"title,omitempty"`
-}
-
 // PostSigninJSONBody defines parameters for PostSignin.
 type PostSigninJSONBody Signin
 
 // PostSignupJSONBody defines parameters for PostSignup.
 type PostSignupJSONBody Signup
 
-// TodoJSONBody defines parameters for Todo.
-type TodoJSONBody Todo
-
 // PostSigninJSONRequestBody defines body for PostSignin for application/json ContentType.
 type PostSigninJSONRequestBody PostSigninJSONBody
 
 // PostSignupJSONRequestBody defines body for PostSignup for application/json ContentType.
 type PostSignupJSONRequestBody PostSignupJSONBody
-
-// TodoJSONRequestBody defines body for Todo for application/json ContentType.
-type TodoJSONRequestBody TodoJSONBody
 

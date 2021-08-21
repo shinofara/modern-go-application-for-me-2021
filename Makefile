@@ -12,7 +12,7 @@ model:
 	go generate ./ent
 
 migrate:
-	docker compose run --rm migration --dryrun=false
+	docker compose run --rm migration --dryrun=false --config environment/development/config.yml
 
 migrate-dryrun:
 	docker compose run --rm migration

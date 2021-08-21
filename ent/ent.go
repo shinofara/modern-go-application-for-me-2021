@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"mygo/ent/auth"
-	"mygo/ent/todo"
 	"mygo/ent/user"
 
 	"entgo.io/ent"
@@ -32,7 +31,6 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		auth.Table: auth.ValidColumn,
-		todo.Table: todo.ValidColumn,
 		user.Table: user.ValidColumn,
 	}
 	check, ok := checks[table]

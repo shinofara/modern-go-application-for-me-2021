@@ -23,7 +23,7 @@ func main() {
 	provides := []interface{}{
 		interfaces.NewDummyMailer,
 		handler.NewHandler,
-		database.Open,
+		database.NewClient,
 		config.DB,
 	}
 
