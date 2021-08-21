@@ -24,7 +24,7 @@ func (h *Handler) 	PostSignup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := h.DB.User.Create()
-	u.SetEmail(*p.Email).SetName(*p.Name).SetPassword(*p.Password)
+	u.SetEmail(p.Email).SetName(p.Name).SetPassword(p.Password)
 	if _, err := u.Save(ctx); err != nil {
 		log.Println(err.Error())
 		fmt.Fprint(w, err)

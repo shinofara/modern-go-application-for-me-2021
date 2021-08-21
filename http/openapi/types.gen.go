@@ -5,9 +5,9 @@ package oapi
 
 // Signup defines model for signup.
 type Signup struct {
-	Email    *string `json:"email,omitempty"`
-	Name     *string `json:"name,omitempty"`
-	Password *string `json:"password,omitempty"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+	Password string `json:"password"`
 }
 
 // Todo defines model for todo.
