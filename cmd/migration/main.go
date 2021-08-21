@@ -30,7 +30,7 @@ func main() {
 		ParseTime:            true,
 	}
 
-	client, err := ent.Open("mysql", mc.FormatDSN(), entOptions...)
+	client, err := ent.Open("database", mc.FormatDSN(), entOptions...)
 	if err != nil {
 		log.Fatalf("failed opening connection to postgres: %v", err)
 	}
