@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	oapi "mygo/http/openapi"
+	"mygo/usecase"
 	"net/http"
 )
 
@@ -23,10 +24,8 @@ func (h *Handler) 	PostSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u := h.DB.User.Create()
-	u.SetEmail(p.Email).SetName(p.Name).SetPassword(p.Password)
-	if _, err := u.Save(ctx); err != nil {
-		log.Println(err.Error())
+	if err := usecase.Signup(ctx, h.DB, &p); err != nil {
+		log.Println(err)
 		fmt.Fprint(w, err)
 		return
 	}
