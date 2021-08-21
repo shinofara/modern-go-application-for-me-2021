@@ -14,7 +14,7 @@ type User struct {
 func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("email").
-			NotEmpty(),
+			NotEmpty().Unique(),
 		field.String("password").
 			NotEmpty(),
 		field.String("name").

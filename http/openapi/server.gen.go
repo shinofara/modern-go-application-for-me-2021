@@ -12,6 +12,9 @@ import (
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
+	// (POST /signin)
+	PostSignin(w http.ResponseWriter, r *http.Request)
+
 	// (POST /signup)
 	PostSignup(w http.ResponseWriter, r *http.Request)
 
@@ -29,6 +32,21 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.HandlerFunc) http.HandlerFunc
+
+// PostSignin operation middleware
+func (siw *ServerInterfaceWrapper) PostSignin(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostSignin(w, r)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
 
 // PostSignup operation middleware
 func (siw *ServerInterfaceWrapper) PostSignup(w http.ResponseWriter, r *http.Request) {
@@ -112,6 +130,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		HandlerMiddlewares: options.Middlewares,
 	}
 
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/signin", wrapper.PostSignin)
+	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/signup", wrapper.PostSignup)
 	})

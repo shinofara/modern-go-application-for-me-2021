@@ -14,6 +14,18 @@ tags:
 servers:
   - url: 'http://localhost:8080'
 paths:
+  /signin:
+    post:
+      requestBody:
+        description: signin
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/signin'
+      responses:
+        '200':
+          description: response
   /signup:
     post:
       requestBody:
@@ -60,6 +72,16 @@ paths:
 
 components:
   schemas:
+    signin:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
     signup:
       type: object
       properties:
