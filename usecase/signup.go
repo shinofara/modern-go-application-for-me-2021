@@ -12,7 +12,7 @@ type ServiceLocator struct {
 	Mailer mailer.MailerInterface
 }
 
-func Signup(ctx context.Context, sl *ServiceLocator,p *oapi.Signup) error {
+func Signup(ctx context.Context, sl *ServiceLocator, p *oapi.Signup) error {
 	uc := sl.DB.User.Create()
 	uc.SetName(p.Name)
 

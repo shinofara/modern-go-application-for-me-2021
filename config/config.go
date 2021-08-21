@@ -1,9 +1,10 @@
 package config
 
 import (
-	"gopkg.in/yaml.v2"
 	"mygo/infrastructure/database"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
@@ -27,4 +28,3 @@ func New(configFilePath string) (*Config, error) {
 
 	return &cfg, nil
 }
-

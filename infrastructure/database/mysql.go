@@ -2,21 +2,22 @@ package database
 
 import (
 	"context"
-	"contrib.go.opencensus.io/integrations/ocsql"
 	"database/sql"
 	"database/sql/driver"
+	"mygo/ent"
+
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/go-sql-driver/mysql"
-	"mygo/ent"
 )
 
 type Config struct {
-	User string
+	User   string
 	Passwd string
-	Net string
-	Host string
-	Port string
+	Net    string
+	Host   string
+	Port   string
 	DBName string `yaml:"db_name"`
 }
 
@@ -49,7 +50,6 @@ func NewClient(cfg *Config) *ent.Client {
 		AllowNativePasswords: true,
 		ParseTime:            true,
 	}
-
 
 	db := sql.OpenDB(connector{mc.FormatDSN()})
 	// Create an ent.Driver from `db`.

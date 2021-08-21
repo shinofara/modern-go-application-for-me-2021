@@ -2,8 +2,6 @@ package main
 
 import (
 	"flag"
-	"github.com/go-chi/chi/v5"
-	"go.uber.org/dig"
 	"log"
 	"mygo/config"
 	"mygo/ent"
@@ -12,6 +10,9 @@ import (
 	"mygo/infrastructure/database"
 	"mygo/infrastructure/mailer"
 
+	"github.com/go-chi/chi/v5"
+	"go.uber.org/dig"
+
 	"net/http"
 )
 
@@ -19,6 +20,7 @@ func main() {
 	var configPath string
 	flag.StringVar(&configPath, "config", "", "path to config yaml path")
 	flag.Parse()
+
 	provides := []interface{}{
 		mailer.NewDummyMailer,
 		handler.NewHandler,
@@ -58,6 +60,5 @@ func Server(mux handler.Handler, db *ent.Client) error {
 	}
 
 	log.Println("run: " + s.Addr)
-
 	return s.ListenAndServe()
 }

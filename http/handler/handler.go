@@ -12,7 +12,7 @@ type Handler struct {
 
 func NewHandler(db *ent.Client, mailer mailer.MailerInterface) Handler {
 	return Handler{
-		DB: db,
+		DB:     db,
 		Mailer: mailer,
 	}
 }

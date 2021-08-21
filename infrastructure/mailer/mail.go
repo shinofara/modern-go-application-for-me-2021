@@ -10,7 +10,8 @@ func NewDummyMailer() MailerInterface {
 	return &DummyMailer{}
 }
 
-type DummyMailer struct {}
+type DummyMailer struct{}
+
 func (DummyMailer) Send(email, title string) error {
 	log.Println(email, title)
 	return nil

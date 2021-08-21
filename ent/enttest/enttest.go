@@ -5,6 +5,7 @@ package enttest
 import (
 	"context"
 	"mygo/ent"
+
 	// required by schema hooks.
 	_ "mygo/ent/runtime"
 
