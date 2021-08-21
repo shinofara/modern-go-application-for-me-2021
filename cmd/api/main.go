@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"mygo/config"
@@ -9,6 +10,10 @@ import (
 	oapi "mygo/http/openapi"
 	"mygo/infrastructure/database"
 	"mygo/infrastructure/mailer"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/dig"
@@ -22,6 +27,7 @@ func main() {
 	flag.Parse()
 
 	provides := []interface{}{
+		context.Background,
 		mailer.NewDummyMailer,
 		handler.NewHandler,
 		database.NewClient,
@@ -46,7 +52,7 @@ func main() {
 	}
 }
 
-func Server(mux handler.Handler, db *ent.Client) error {
+func Server(ctx context.Context, mux handler.Handler, db *ent.Client) error {
 	defer func() {
 		db.Close()
 		log.Println("DB Close")
@@ -54,11 +60,24 @@ func Server(mux handler.Handler, db *ent.Client) error {
 
 	r := chi.NewRouter()
 	oapi.HandlerFromMux(&mux, r)
-	s := &http.Server{
+	srv := &http.Server{
 		Handler: r,
 		Addr:    "0.0.0.0:8080",
 	}
 
-	log.Println("run: " + s.Addr)
-	return s.ListenAndServe()
+	go func() {
+		log.Println("run: " + srv.Addr)
+		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+			// Error starting or closing listener:
+			log.Fatalln("Server closed with error:", err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, os.Interrupt)
+	log.Printf("SIGNAL %d received, then shutting down...\n", <-quit)
+
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	return srv.Shutdown(ctx)
 }
