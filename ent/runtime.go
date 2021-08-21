@@ -20,12 +20,16 @@ func init() {
 	todo.TitleValidator = todoDescTitle.Validators[0].(func(string) error)
 	userFields := schema.User{}.Fields()
 	_ = userFields
-	// userDescAge is the schema descriptor for age field.
-	userDescAge := userFields[0].Descriptor()
-	// user.AgeValidator is a validator for the "age" field. It is called by the builders before save.
-	user.AgeValidator = userDescAge.Validators[0].(func(int) error)
+	// userDescEmail is the schema descriptor for email field.
+	userDescEmail := userFields[0].Descriptor()
+	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
+	// userDescPassword is the schema descriptor for password field.
+	userDescPassword := userFields[1].Descriptor()
+	// user.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
+	user.PasswordValidator = userDescPassword.Validators[0].(func(string) error)
 	// userDescName is the schema descriptor for name field.
-	userDescName := userFields[1].Descriptor()
-	// user.DefaultName holds the default value on creation for the name field.
-	user.DefaultName = userDescName.Default.(string)
+	userDescName := userFields[2].Descriptor()
+	// user.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	user.NameValidator = userDescName.Validators[0].(func(string) error)
 }

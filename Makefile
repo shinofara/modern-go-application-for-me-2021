@@ -12,7 +12,6 @@ model:
 	go generate ./ent
 
 migrate:
-	docker coompose -d db
 	docker compose run --rm migration --dryrun=false
 
 migrate-dryrun:
