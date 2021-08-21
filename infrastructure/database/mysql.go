@@ -40,7 +40,7 @@ func (connector) Driver() driver.Driver {
 }
 
 // Open new connection and start stats recorder.
-func NewClient(cfg *Config) *ent.Client {
+func NewClient(cfg *Config, opts ...ent.Option) *ent.Client {
 	mc := mysql.Config{
 		User:                 cfg.User,
 		Passwd:               cfg.Passwd,
@@ -54,5 +54,11 @@ func NewClient(cfg *Config) *ent.Client {
 	db := sql.OpenDB(connector{mc.FormatDSN()})
 	// Create an ent.Driver from `db`.
 	drv := entsql.OpenDB(dialect.MySQL, db)
-	return ent.NewClient(ent.Driver(drv))
+
+	o := []ent.Option{
+		ent.Driver(drv),
+	}
+
+	o = append(o, opts...)
+	return ent.NewClient(o...)
 }

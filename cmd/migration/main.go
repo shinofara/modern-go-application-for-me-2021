@@ -18,17 +18,16 @@ func main() {
 	flag.StringVar(&configPath, "config", "", "path to config yaml path")
 	flag.Parse()
 
-	entOptions := []ent.Option{}
-
-	// 発行されるSQLをロギングするなら
-	entOptions = append(entOptions, ent.Debug())
-
+	entOptions := []ent.Option{
+		ent.Debug(),
+	}
+	
 	cfg, err := config.New(configPath)
 	if err != nil {
 		panic(err)
 	}
 
-	client := database.NewClient(&cfg.DB)
+	client := database.NewClient(&cfg.DB, entOptions...)
 	defer client.Close()
 	ctx := context.Background()
 
