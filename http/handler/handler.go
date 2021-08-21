@@ -2,15 +2,15 @@ package handler
 
 import (
 	"mygo/ent"
-	"mygo/interfaces"
+	"mygo/infrastructure/mailer"
 )
 
 type Handler struct {
-	DB *ent.Client
-	Mailer interfaces.MailerInterface
+	DB     *ent.Client
+	Mailer mailer.MailerInterface
 }
 
-func NewHandler(db *ent.Client, mailer interfaces.MailerInterface) Handler {
+func NewHandler(db *ent.Client, mailer mailer.MailerInterface) Handler {
 	return Handler{
 		DB: db,
 		Mailer: mailer,

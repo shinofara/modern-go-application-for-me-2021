@@ -10,7 +10,7 @@ import (
 	"mygo/http/handler"
 	oapi "mygo/http/openapi"
 	"mygo/infrastructure/database"
-	"mygo/interfaces"
+	"mygo/infrastructure/mailer"
 
 	"net/http"
 )
@@ -19,9 +19,8 @@ func main() {
 	var configPath string
 	flag.StringVar(&configPath, "config", "", "path to config yaml path")
 	flag.Parse()
-
 	provides := []interface{}{
-		interfaces.NewDummyMailer,
+		mailer.NewDummyMailer,
 		handler.NewHandler,
 		database.NewClient,
 		config.DB,

@@ -1,4 +1,4 @@
-package interfaces
+package mailer
 
 import "log"
 
@@ -6,7 +6,7 @@ type MailerInterface interface {
 	Send(email, title string) error
 }
 
-func NewDummyMailer() MailerInterface{
+func NewDummyMailer() MailerInterface {
 	return &DummyMailer{}
 }
 

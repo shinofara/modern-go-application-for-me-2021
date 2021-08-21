@@ -4,12 +4,12 @@ import (
 	"context"
 	"mygo/ent"
 	oapi "mygo/http/openapi"
-	"mygo/interfaces"
+	"mygo/infrastructure/mailer"
 )
 
 type ServiceLocator struct {
-	DB *ent.Client
-	Mailer interfaces.MailerInterface
+	DB     *ent.Client
+	Mailer mailer.MailerInterface
 }
 
 func Signup(ctx context.Context, sl *ServiceLocator,p *oapi.Signup) error {
