@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"mygo/http/oapi"
 )
@@ -9,11 +10,19 @@ import (
 // CreateTask タスク作成
 // タスクのDB登録と、タスクassign通知
 func (u *UseCase) CreateTask(ctx context.Context, p *oapi.Task) error {
+	// 一旦意味も無くtransactionで書いてる
 	tx, err := u.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback()
+	defer func() {
+		if err := tx.Rollback(); err != nil {
+			if err != sql.ErrTxDone {
+				panic(err)
+			}
+
+		}
+	}()
 
 	user, err := tx.User.Get(ctx, 10)
 	if err != nil {
@@ -33,6 +42,6 @@ func (u *UseCase) CreateTask(ctx context.Context, p *oapi.Task) error {
 	if err := tx.Commit(); err != nil {
 		return err
 	}
-	
+
 	return u.Mailer.Send(a.Email, fmt.Sprintf("%s宛にID%dの「%s」を通知しました", a.Email, t.ID, t.Title))
 }
