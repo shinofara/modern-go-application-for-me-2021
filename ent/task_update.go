@@ -52,6 +52,25 @@ func (tu *TaskUpdate) SetCreator(u *User) *TaskUpdate {
 	return tu.SetCreatorID(u.ID)
 }
 
+// SetAssignID sets the "assign" edge to the User entity by ID.
+func (tu *TaskUpdate) SetAssignID(id int) *TaskUpdate {
+	tu.mutation.SetAssignID(id)
+	return tu
+}
+
+// SetNillableAssignID sets the "assign" edge to the User entity by ID if the given value is not nil.
+func (tu *TaskUpdate) SetNillableAssignID(id *int) *TaskUpdate {
+	if id != nil {
+		tu = tu.SetAssignID(*id)
+	}
+	return tu
+}
+
+// SetAssign sets the "assign" edge to the User entity.
+func (tu *TaskUpdate) SetAssign(u *User) *TaskUpdate {
+	return tu.SetAssignID(u.ID)
+}
+
 // Mutation returns the TaskMutation object of the builder.
 func (tu *TaskUpdate) Mutation() *TaskMutation {
 	return tu.mutation
@@ -60,6 +79,12 @@ func (tu *TaskUpdate) Mutation() *TaskMutation {
 // ClearCreator clears the "creator" edge to the User entity.
 func (tu *TaskUpdate) ClearCreator() *TaskUpdate {
 	tu.mutation.ClearCreator()
+	return tu
+}
+
+// ClearAssign clears the "assign" edge to the User entity.
+func (tu *TaskUpdate) ClearAssign() *TaskUpdate {
+	tu.mutation.ClearAssign()
 	return tu
 }
 
@@ -158,6 +183,18 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: task.FieldTitle,
 		})
 	}
+	if tu.mutation.CreatedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: task.FieldCreatedAt,
+		})
+	}
+	if tu.mutation.UpdatedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: task.FieldUpdatedAt,
+		})
+	}
 	if tu.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -180,6 +217,41 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Inverse: true,
 			Table:   task.CreatorTable,
 			Columns: []string{task.CreatorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.AssignCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   task.AssignTable,
+			Columns: []string{task.AssignColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.AssignIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   task.AssignTable,
+			Columns: []string{task.AssignColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -237,6 +309,25 @@ func (tuo *TaskUpdateOne) SetCreator(u *User) *TaskUpdateOne {
 	return tuo.SetCreatorID(u.ID)
 }
 
+// SetAssignID sets the "assign" edge to the User entity by ID.
+func (tuo *TaskUpdateOne) SetAssignID(id int) *TaskUpdateOne {
+	tuo.mutation.SetAssignID(id)
+	return tuo
+}
+
+// SetNillableAssignID sets the "assign" edge to the User entity by ID if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableAssignID(id *int) *TaskUpdateOne {
+	if id != nil {
+		tuo = tuo.SetAssignID(*id)
+	}
+	return tuo
+}
+
+// SetAssign sets the "assign" edge to the User entity.
+func (tuo *TaskUpdateOne) SetAssign(u *User) *TaskUpdateOne {
+	return tuo.SetAssignID(u.ID)
+}
+
 // Mutation returns the TaskMutation object of the builder.
 func (tuo *TaskUpdateOne) Mutation() *TaskMutation {
 	return tuo.mutation
@@ -245,6 +336,12 @@ func (tuo *TaskUpdateOne) Mutation() *TaskMutation {
 // ClearCreator clears the "creator" edge to the User entity.
 func (tuo *TaskUpdateOne) ClearCreator() *TaskUpdateOne {
 	tuo.mutation.ClearCreator()
+	return tuo
+}
+
+// ClearAssign clears the "assign" edge to the User entity.
+func (tuo *TaskUpdateOne) ClearAssign() *TaskUpdateOne {
+	tuo.mutation.ClearAssign()
 	return tuo
 }
 
@@ -367,6 +464,18 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Column: task.FieldTitle,
 		})
 	}
+	if tuo.mutation.CreatedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: task.FieldCreatedAt,
+		})
+	}
+	if tuo.mutation.UpdatedAtCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Column: task.FieldUpdatedAt,
+		})
+	}
 	if tuo.mutation.CreatorCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -389,6 +498,41 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Inverse: true,
 			Table:   task.CreatorTable,
 			Columns: []string{task.CreatorColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.AssignCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   task.AssignTable,
+			Columns: []string{task.AssignColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.AssignIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   task.AssignTable,
+			Columns: []string{task.AssignColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

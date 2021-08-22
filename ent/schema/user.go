@@ -23,5 +23,6 @@ func (User) Fields() []ent.Field {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("create_tasks", Task.Type),
+		edge.To("assign_tasks", Task.Type),
 	}
 }

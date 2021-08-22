@@ -28,6 +28,7 @@ type UserQuery struct {
 	predicates []predicate.User
 	// eager-loading edges.
 	withCreateTasks *TaskQuery
+	withAssignTasks *TaskQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -79,6 +80,28 @@ func (uq *UserQuery) QueryCreateTasks() *TaskQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(task.Table, task.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.CreateTasksTable, user.CreateTasksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAssignTasks chains the current query on the "assign_tasks" edge.
+func (uq *UserQuery) QueryAssignTasks() *TaskQuery {
+	query := &TaskQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(task.Table, task.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AssignTasksTable, user.AssignTasksColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -268,6 +291,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		order:           append([]OrderFunc{}, uq.order...),
 		predicates:      append([]predicate.User{}, uq.predicates...),
 		withCreateTasks: uq.withCreateTasks.Clone(),
+		withAssignTasks: uq.withAssignTasks.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -282,6 +306,17 @@ func (uq *UserQuery) WithCreateTasks(opts ...func(*TaskQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withCreateTasks = query
+	return uq
+}
+
+// WithAssignTasks tells the query-builder to eager-load the nodes that are connected to
+// the "assign_tasks" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithAssignTasks(opts ...func(*TaskQuery)) *UserQuery {
+	query := &TaskQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withAssignTasks = query
 	return uq
 }
 
@@ -350,8 +385,9 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			uq.withCreateTasks != nil,
+			uq.withAssignTasks != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -400,6 +436,35 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_create_tasks" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.CreateTasks = append(node.Edges.CreateTasks, n)
+		}
+	}
+
+	if query := uq.withAssignTasks; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*User)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.AssignTasks = []*Task{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Task(func(s *sql.Selector) {
+			s.Where(sql.InValues(user.AssignTasksColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.user_assign_tasks
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "user_assign_tasks" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_assign_tasks" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.AssignTasks = append(node.Edges.AssignTasks, n)
 		}
 	}
 

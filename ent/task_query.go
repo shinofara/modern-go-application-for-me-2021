@@ -27,6 +27,7 @@ type TaskQuery struct {
 	predicates []predicate.Task
 	// eager-loading edges.
 	withCreator *UserQuery
+	withAssign  *UserQuery
 	withFKs     bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -79,6 +80,28 @@ func (tq *TaskQuery) QueryCreator() *UserQuery {
 			sqlgraph.From(task.Table, task.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, task.CreatorTable, task.CreatorColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAssign chains the current query on the "assign" edge.
+func (tq *TaskQuery) QueryAssign() *UserQuery {
+	query := &UserQuery{config: tq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(task.Table, task.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, task.AssignTable, task.AssignColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -268,6 +291,7 @@ func (tq *TaskQuery) Clone() *TaskQuery {
 		order:       append([]OrderFunc{}, tq.order...),
 		predicates:  append([]predicate.Task{}, tq.predicates...),
 		withCreator: tq.withCreator.Clone(),
+		withAssign:  tq.withAssign.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
@@ -282,6 +306,17 @@ func (tq *TaskQuery) WithCreator(opts ...func(*UserQuery)) *TaskQuery {
 		opt(query)
 	}
 	tq.withCreator = query
+	return tq
+}
+
+// WithAssign tells the query-builder to eager-load the nodes that are connected to
+// the "assign" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TaskQuery) WithAssign(opts ...func(*UserQuery)) *TaskQuery {
+	query := &UserQuery{config: tq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withAssign = query
 	return tq
 }
 
@@ -351,11 +386,12 @@ func (tq *TaskQuery) sqlAll(ctx context.Context) ([]*Task, error) {
 		nodes       = []*Task{}
 		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			tq.withCreator != nil,
+			tq.withAssign != nil,
 		}
 	)
-	if tq.withCreator != nil {
+	if tq.withCreator != nil || tq.withAssign != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -406,6 +442,35 @@ func (tq *TaskQuery) sqlAll(ctx context.Context) ([]*Task, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Creator = n
+			}
+		}
+	}
+
+	if query := tq.withAssign; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Task)
+		for i := range nodes {
+			if nodes[i].user_assign_tasks == nil {
+				continue
+			}
+			fk := *nodes[i].user_assign_tasks
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
+		}
+		query.Where(user.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_assign_tasks" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Assign = n
 			}
 		}
 	}

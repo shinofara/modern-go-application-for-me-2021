@@ -41,6 +41,21 @@ func (uc *UserCreate) AddCreateTasks(t ...*Task) *UserCreate {
 	return uc.AddCreateTaskIDs(ids...)
 }
 
+// AddAssignTaskIDs adds the "assign_tasks" edge to the Task entity by IDs.
+func (uc *UserCreate) AddAssignTaskIDs(ids ...int) *UserCreate {
+	uc.mutation.AddAssignTaskIDs(ids...)
+	return uc
+}
+
+// AddAssignTasks adds the "assign_tasks" edges to the Task entity.
+func (uc *UserCreate) AddAssignTasks(t ...*Task) *UserCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddAssignTaskIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -160,6 +175,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Inverse: false,
 			Table:   user.CreateTasksTable,
 			Columns: []string{user.CreateTasksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: task.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AssignTasksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AssignTasksTable,
+			Columns: []string{user.AssignTasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

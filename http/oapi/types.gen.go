@@ -16,15 +16,26 @@ type Signup struct {
 	Password string `json:"password"`
 }
 
+// Task defines model for task.
+type Task struct {
+	Title string `json:"title"`
+}
+
 // PostSigninJSONBody defines parameters for PostSignin.
 type PostSigninJSONBody Signin
 
 // PostSignupJSONBody defines parameters for PostSignup.
 type PostSignupJSONBody Signup
 
+// PostTasksJSONBody defines parameters for PostTasks.
+type PostTasksJSONBody Task
+
 // PostSigninJSONRequestBody defines body for PostSignin for application/json ContentType.
 type PostSigninJSONRequestBody PostSigninJSONBody
 
 // PostSignupJSONRequestBody defines body for PostSignup for application/json ContentType.
 type PostSignupJSONRequestBody PostSignupJSONBody
+
+// PostTasksJSONRequestBody defines body for PostTasks for application/json ContentType.
+type PostTasksJSONRequestBody PostTasksJSONBody
 

@@ -14,6 +14,18 @@ tags:
 servers:
   - url: 'http://localhost:8080'
 paths:
+  /tasks:
+    post:
+      requestBody:
+        description: signin
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/task'
+      responses:
+        '200':
+          description: response
   /my_tasks:
     get:
       responses:
@@ -46,6 +58,13 @@ paths:
 
 components:
   schemas:
+    task:
+      type: object
+      properties:
+        title:
+          type: string
+      required:
+        - title
     signin:
       type: object
       properties:

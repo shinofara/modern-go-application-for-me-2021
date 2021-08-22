@@ -26,9 +26,11 @@ type User struct {
 type UserEdges struct {
 	// CreateTasks holds the value of the create_tasks edge.
 	CreateTasks []*Task `json:"create_tasks,omitempty"`
+	// AssignTasks holds the value of the assign_tasks edge.
+	AssignTasks []*Task `json:"assign_tasks,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // CreateTasksOrErr returns the CreateTasks value or an error if the edge
@@ -38,6 +40,15 @@ func (e UserEdges) CreateTasksOrErr() ([]*Task, error) {
 		return e.CreateTasks, nil
 	}
 	return nil, &NotLoadedError{edge: "create_tasks"}
+}
+
+// AssignTasksOrErr returns the AssignTasks value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AssignTasksOrErr() ([]*Task, error) {
+	if e.loadedTypes[1] {
+		return e.AssignTasks, nil
+	}
+	return nil, &NotLoadedError{edge: "assign_tasks"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -84,6 +95,11 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 // QueryCreateTasks queries the "create_tasks" edge of the User entity.
 func (u *User) QueryCreateTasks() *TaskQuery {
 	return (&UserClient{config: u.config}).QueryCreateTasks(u)
+}
+
+// QueryAssignTasks queries the "assign_tasks" edge of the User entity.
+func (u *User) QueryAssignTasks() *TaskQuery {
+	return (&UserClient{config: u.config}).QueryAssignTasks(u)
 }
 
 // Update returns a builder for updating this User.

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"mygo/ent/task"
 	"mygo/ent/user"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -23,6 +24,34 @@ type TaskCreate struct {
 // SetTitle sets the "title" field.
 func (tc *TaskCreate) SetTitle(s string) *TaskCreate {
 	tc.mutation.SetTitle(s)
+	return tc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (tc *TaskCreate) SetCreatedAt(t time.Time) *TaskCreate {
+	tc.mutation.SetCreatedAt(t)
+	return tc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableCreatedAt(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetCreatedAt(*t)
+	}
+	return tc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (tc *TaskCreate) SetUpdatedAt(t time.Time) *TaskCreate {
+	tc.mutation.SetUpdatedAt(t)
+	return tc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableUpdatedAt(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetUpdatedAt(*t)
+	}
 	return tc
 }
 
@@ -43,6 +72,25 @@ func (tc *TaskCreate) SetNillableCreatorID(id *int) *TaskCreate {
 // SetCreator sets the "creator" edge to the User entity.
 func (tc *TaskCreate) SetCreator(u *User) *TaskCreate {
 	return tc.SetCreatorID(u.ID)
+}
+
+// SetAssignID sets the "assign" edge to the User entity by ID.
+func (tc *TaskCreate) SetAssignID(id int) *TaskCreate {
+	tc.mutation.SetAssignID(id)
+	return tc
+}
+
+// SetNillableAssignID sets the "assign" edge to the User entity by ID if the given value is not nil.
+func (tc *TaskCreate) SetNillableAssignID(id *int) *TaskCreate {
+	if id != nil {
+		tc = tc.SetAssignID(*id)
+	}
+	return tc
+}
+
+// SetAssign sets the "assign" edge to the User entity.
+func (tc *TaskCreate) SetAssign(u *User) *TaskCreate {
+	return tc.SetAssignID(u.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -158,6 +206,22 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		})
 		_node.Title = value
 	}
+	if value, ok := tc.mutation.CreatedAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: task.FieldCreatedAt,
+		})
+		_node.CreatedAt = value
+	}
+	if value, ok := tc.mutation.UpdatedAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: task.FieldUpdatedAt,
+		})
+		_node.UpdatedAt = value
+	}
 	if nodes := tc.mutation.CreatorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -176,6 +240,26 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.user_create_tasks = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.AssignIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   task.AssignTable,
+			Columns: []string{task.AssignColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_assign_tasks = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

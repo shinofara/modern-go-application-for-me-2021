@@ -11,6 +11,8 @@ const (
 	FieldName = "name"
 	// EdgeCreateTasks holds the string denoting the create_tasks edge name in mutations.
 	EdgeCreateTasks = "create_tasks"
+	// EdgeAssignTasks holds the string denoting the assign_tasks edge name in mutations.
+	EdgeAssignTasks = "assign_tasks"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// CreateTasksTable is the table that holds the create_tasks relation/edge.
@@ -20,6 +22,13 @@ const (
 	CreateTasksInverseTable = "tasks"
 	// CreateTasksColumn is the table column denoting the create_tasks relation/edge.
 	CreateTasksColumn = "user_create_tasks"
+	// AssignTasksTable is the table that holds the assign_tasks relation/edge.
+	AssignTasksTable = "tasks"
+	// AssignTasksInverseTable is the table name for the Task entity.
+	// It exists in this package in order to avoid circular dependency with the "task" package.
+	AssignTasksInverseTable = "tasks"
+	// AssignTasksColumn is the table column denoting the assign_tasks relation/edge.
+	AssignTasksColumn = "user_assign_tasks"
 )
 
 // Columns holds all SQL columns for user fields.

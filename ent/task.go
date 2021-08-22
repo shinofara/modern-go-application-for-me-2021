@@ -7,6 +7,7 @@ import (
 	"mygo/ent/task"
 	"mygo/ent/user"
 	"strings"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 )
@@ -18,19 +19,26 @@ type Task struct {
 	ID int `json:"id,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskQuery when eager-loading is set.
 	Edges             TaskEdges `json:"edges"`
 	user_create_tasks *int
+	user_assign_tasks *int
 }
 
 // TaskEdges holds the relations/edges for other nodes in the graph.
 type TaskEdges struct {
 	// Creator holds the value of the creator edge.
 	Creator *User `json:"creator,omitempty"`
+	// Assign holds the value of the assign edge.
+	Assign *User `json:"assign,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // CreatorOrErr returns the Creator value or an error if the edge
@@ -47,6 +55,20 @@ func (e TaskEdges) CreatorOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "creator"}
 }
 
+// AssignOrErr returns the Assign value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TaskEdges) AssignOrErr() (*User, error) {
+	if e.loadedTypes[1] {
+		if e.Assign == nil {
+			// The edge assign was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.Assign, nil
+	}
+	return nil, &NotLoadedError{edge: "assign"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Task) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
@@ -56,7 +78,11 @@ func (*Task) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case task.FieldTitle:
 			values[i] = new(sql.NullString)
+		case task.FieldCreatedAt, task.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		case task.ForeignKeys[0]: // user_create_tasks
+			values[i] = new(sql.NullInt64)
+		case task.ForeignKeys[1]: // user_assign_tasks
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Task", columns[i])
@@ -85,12 +111,31 @@ func (t *Task) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				t.Title = value.String
 			}
+		case task.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				t.CreatedAt = value.Time
+			}
+		case task.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				t.UpdatedAt = value.Time
+			}
 		case task.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field user_create_tasks", value)
 			} else if value.Valid {
 				t.user_create_tasks = new(int)
 				*t.user_create_tasks = int(value.Int64)
+			}
+		case task.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_assign_tasks", value)
+			} else if value.Valid {
+				t.user_assign_tasks = new(int)
+				*t.user_assign_tasks = int(value.Int64)
 			}
 		}
 	}
@@ -100,6 +145,11 @@ func (t *Task) assignValues(columns []string, values []interface{}) error {
 // QueryCreator queries the "creator" edge of the Task entity.
 func (t *Task) QueryCreator() *UserQuery {
 	return (&TaskClient{config: t.config}).QueryCreator(t)
+}
+
+// QueryAssign queries the "assign" edge of the Task entity.
+func (t *Task) QueryAssign() *UserQuery {
+	return (&TaskClient{config: t.config}).QueryAssign(t)
 }
 
 // Update returns a builder for updating this Task.
@@ -127,6 +177,10 @@ func (t *Task) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", t.ID))
 	builder.WriteString(", title=")
 	builder.WriteString(t.Title)
+	builder.WriteString(", created_at=")
+	builder.WriteString(t.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", updated_at=")
+	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -33,7 +33,10 @@ var (
 	TasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "title", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Default: "CURRENT_TIMESTAMP"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Default: "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"},
 		{Name: "user_create_tasks", Type: field.TypeInt, Nullable: true},
+		{Name: "user_assign_tasks", Type: field.TypeInt, Nullable: true},
 	}
 	// TasksTable holds the schema information for the "tasks" table.
 	TasksTable = &schema.Table{
@@ -43,7 +46,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tasks_users_create_tasks",
-				Columns:    []*schema.Column{TasksColumns[2]},
+				Columns:    []*schema.Column{TasksColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "tasks_users_assign_tasks",
+				Columns:    []*schema.Column{TasksColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -71,4 +80,5 @@ var (
 func init() {
 	AuthsTable.ForeignKeys[0].RefTable = UsersTable
 	TasksTable.ForeignKeys[0].RefTable = UsersTable
+	TasksTable.ForeignKeys[1].RefTable = UsersTable
 }

@@ -343,6 +343,22 @@ func (c *TaskClient) QueryCreator(t *Task) *UserQuery {
 	return query
 }
 
+// QueryAssign queries the assign edge of a Task.
+func (c *TaskClient) QueryAssign(t *Task) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(task.Table, task.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, task.AssignTable, task.AssignColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TaskClient) Hooks() []Hook {
 	return c.hooks.Task
@@ -442,6 +458,22 @@ func (c *UserClient) QueryCreateTasks(u *User) *TaskQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(task.Table, task.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.CreateTasksTable, user.CreateTasksColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAssignTasks queries the assign_tasks edge of a User.
+func (c *UserClient) QueryAssignTasks(u *User) *TaskQuery {
+	query := &TaskQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(task.Table, task.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AssignTasksTable, user.AssignTasksColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

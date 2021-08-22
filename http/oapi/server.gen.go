@@ -20,6 +20,9 @@ type ServerInterface interface {
 
 	// (POST /signup)
 	PostSignup(w http.ResponseWriter, r *http.Request)
+
+	// (POST /tasks)
+	PostTasks(w http.ResponseWriter, r *http.Request)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -75,6 +78,21 @@ func (siw *ServerInterfaceWrapper) PostSignup(w http.ResponseWriter, r *http.Req
 	handler(w, r.WithContext(ctx))
 }
 
+// PostTasks operation middleware
+func (siw *ServerInterfaceWrapper) PostTasks(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostTasks(w, r)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
 // Handler creates http.Handler with routing matching OpenAPI spec.
 func Handler(si ServerInterface) http.Handler {
 	return HandlerWithOptions(si, ChiServerOptions{})
@@ -120,6 +138,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/signup", wrapper.PostSignup)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/tasks", wrapper.PostTasks)
 	})
 
 	return r

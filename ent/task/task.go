@@ -9,8 +9,14 @@ const (
 	FieldID = "id"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// EdgeCreator holds the string denoting the creator edge name in mutations.
 	EdgeCreator = "creator"
+	// EdgeAssign holds the string denoting the assign edge name in mutations.
+	EdgeAssign = "assign"
 	// Table holds the table name of the task in the database.
 	Table = "tasks"
 	// CreatorTable is the table that holds the creator relation/edge.
@@ -20,18 +26,28 @@ const (
 	CreatorInverseTable = "users"
 	// CreatorColumn is the table column denoting the creator relation/edge.
 	CreatorColumn = "user_create_tasks"
+	// AssignTable is the table that holds the assign relation/edge.
+	AssignTable = "tasks"
+	// AssignInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	AssignInverseTable = "users"
+	// AssignColumn is the table column denoting the assign relation/edge.
+	AssignColumn = "user_assign_tasks"
 )
 
 // Columns holds all SQL columns for task fields.
 var Columns = []string{
 	FieldID,
 	FieldTitle,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tasks"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"user_create_tasks",
+	"user_assign_tasks",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
