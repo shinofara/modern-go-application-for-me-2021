@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Auth is the client for interacting with the Auth builders.
 	Auth *AuthClient
+	// Task is the client for interacting with the Task builders.
+	Task *TaskClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -152,6 +154,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Auth = NewAuthClient(tx.config)
+	tx.Task = NewTaskClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

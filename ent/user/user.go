@@ -9,8 +9,17 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// EdgeCreateTasks holds the string denoting the create_tasks edge name in mutations.
+	EdgeCreateTasks = "create_tasks"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// CreateTasksTable is the table that holds the create_tasks relation/edge.
+	CreateTasksTable = "tasks"
+	// CreateTasksInverseTable is the table name for the Task entity.
+	// It exists in this package in order to avoid circular dependency with the "task" package.
+	CreateTasksInverseTable = "tasks"
+	// CreateTasksColumn is the table column denoting the create_tasks relation/edge.
+	CreateTasksColumn = "user_create_tasks"
 )
 
 // Columns holds all SQL columns for user fields.

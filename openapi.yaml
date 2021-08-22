@@ -14,6 +14,11 @@ tags:
 servers:
   - url: 'http://localhost:8080'
 paths:
+  /my_tasks:
+    get:
+      responses:
+        '200':
+          description: response
   /signin:
     post:
       requestBody:

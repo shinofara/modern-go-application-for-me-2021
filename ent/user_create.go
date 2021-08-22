@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"mygo/ent/task"
 	"mygo/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -23,6 +24,21 @@ type UserCreate struct {
 func (uc *UserCreate) SetName(s string) *UserCreate {
 	uc.mutation.SetName(s)
 	return uc
+}
+
+// AddCreateTaskIDs adds the "create_tasks" edge to the Task entity by IDs.
+func (uc *UserCreate) AddCreateTaskIDs(ids ...int) *UserCreate {
+	uc.mutation.AddCreateTaskIDs(ids...)
+	return uc
+}
+
+// AddCreateTasks adds the "create_tasks" edges to the Task entity.
+func (uc *UserCreate) AddCreateTasks(t ...*Task) *UserCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddCreateTaskIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -137,6 +153,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldName,
 		})
 		_node.Name = value
+	}
+	if nodes := uc.mutation.CreateTasksIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.CreateTasksTable,
+			Columns: []string{user.CreateTasksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: task.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

@@ -6,6 +6,7 @@ import (
 	"mygo/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -206,6 +207,34 @@ func NameEqualFold(v string) predicate.User {
 func NameContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldName), v))
+	})
+}
+
+// HasCreateTasks applies the HasEdge predicate on the "create_tasks" edge.
+func HasCreateTasks() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CreateTasksTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CreateTasksTable, CreateTasksColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCreateTasksWith applies the HasEdge predicate on the "create_tasks" edge with a given conditions (other predicates).
+func HasCreateTasksWith(preds ...predicate.Task) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CreateTasksInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CreateTasksTable, CreateTasksColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 
