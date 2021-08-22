@@ -10,6 +10,7 @@ import (
 	oapi "mygo/http/oapi"
 	"mygo/infrastructure/database"
 	"mygo/infrastructure/mailer"
+	"mygo/repository"
 	"mygo/usecase"
 	"os"
 	"os/signal"
@@ -31,6 +32,7 @@ func main() {
 		context.Background,
 		mailer.NewDummyMailer,
 		handler.NewHandler,
+		repository.NewRepository,
 		usecase.NewUseCase,
 		database.NewClient,
 		config.DB,

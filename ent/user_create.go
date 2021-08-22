@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"mygo/ent/auth"
 	"mygo/ent/task"
 	"mygo/ent/user"
 
@@ -24,6 +25,17 @@ type UserCreate struct {
 func (uc *UserCreate) SetName(s string) *UserCreate {
 	uc.mutation.SetName(s)
 	return uc
+}
+
+// SetAuthID sets the "auth" edge to the Auth entity by ID.
+func (uc *UserCreate) SetAuthID(id int) *UserCreate {
+	uc.mutation.SetAuthID(id)
+	return uc
+}
+
+// SetAuth sets the "auth" edge to the Auth entity.
+func (uc *UserCreate) SetAuth(a *Auth) *UserCreate {
+	return uc.SetAuthID(a.ID)
 }
 
 // AddCreateTaskIDs adds the "create_tasks" edge to the Task entity by IDs.
@@ -134,6 +146,9 @@ func (uc *UserCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "name": %w`, err)}
 		}
 	}
+	if _, ok := uc.mutation.AuthID(); !ok {
+		return &ValidationError{Name: "auth", err: errors.New("ent: missing required edge \"auth\"")}
+	}
 	return nil
 }
 
@@ -168,6 +183,26 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldName,
 		})
 		_node.Name = value
+	}
+	if nodes := uc.mutation.AuthIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   user.AuthTable,
+			Columns: []string{user.AuthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: auth.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.auth_user = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := uc.mutation.CreateTasksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

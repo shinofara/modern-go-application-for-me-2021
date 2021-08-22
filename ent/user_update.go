@@ -4,7 +4,9 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"mygo/ent/auth"
 	"mygo/ent/predicate"
 	"mygo/ent/task"
 	"mygo/ent/user"
@@ -31,6 +33,17 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 func (uu *UserUpdate) SetName(s string) *UserUpdate {
 	uu.mutation.SetName(s)
 	return uu
+}
+
+// SetAuthID sets the "auth" edge to the Auth entity by ID.
+func (uu *UserUpdate) SetAuthID(id int) *UserUpdate {
+	uu.mutation.SetAuthID(id)
+	return uu
+}
+
+// SetAuth sets the "auth" edge to the Auth entity.
+func (uu *UserUpdate) SetAuth(a *Auth) *UserUpdate {
+	return uu.SetAuthID(a.ID)
 }
 
 // AddCreateTaskIDs adds the "create_tasks" edge to the Task entity by IDs.
@@ -66,6 +79,12 @@ func (uu *UserUpdate) AddAssignTasks(t ...*Task) *UserUpdate {
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
+}
+
+// ClearAuth clears the "auth" edge to the Auth entity.
+func (uu *UserUpdate) ClearAuth() *UserUpdate {
+	uu.mutation.ClearAuth()
+	return uu
 }
 
 // ClearCreateTasks clears all "create_tasks" edges to the Task entity.
@@ -177,6 +196,9 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if _, ok := uu.mutation.AuthID(); uu.mutation.AuthCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"auth\"")
+	}
 	return nil
 }
 
@@ -204,6 +226,41 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Value:  value,
 			Column: user.FieldName,
 		})
+	}
+	if uu.mutation.AuthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   user.AuthTable,
+			Columns: []string{user.AuthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: auth.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AuthIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   user.AuthTable,
+			Columns: []string{user.AuthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: auth.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if uu.mutation.CreateTasksCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -338,6 +395,17 @@ func (uuo *UserUpdateOne) SetName(s string) *UserUpdateOne {
 	return uuo
 }
 
+// SetAuthID sets the "auth" edge to the Auth entity by ID.
+func (uuo *UserUpdateOne) SetAuthID(id int) *UserUpdateOne {
+	uuo.mutation.SetAuthID(id)
+	return uuo
+}
+
+// SetAuth sets the "auth" edge to the Auth entity.
+func (uuo *UserUpdateOne) SetAuth(a *Auth) *UserUpdateOne {
+	return uuo.SetAuthID(a.ID)
+}
+
 // AddCreateTaskIDs adds the "create_tasks" edge to the Task entity by IDs.
 func (uuo *UserUpdateOne) AddCreateTaskIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddCreateTaskIDs(ids...)
@@ -371,6 +439,12 @@ func (uuo *UserUpdateOne) AddAssignTasks(t ...*Task) *UserUpdateOne {
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearAuth clears the "auth" edge to the Auth entity.
+func (uuo *UserUpdateOne) ClearAuth() *UserUpdateOne {
+	uuo.mutation.ClearAuth()
+	return uuo
 }
 
 // ClearCreateTasks clears all "create_tasks" edges to the Task entity.
@@ -489,6 +563,9 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if _, ok := uuo.mutation.AuthID(); uuo.mutation.AuthCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"auth\"")
+	}
 	return nil
 }
 
@@ -533,6 +610,41 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Value:  value,
 			Column: user.FieldName,
 		})
+	}
+	if uuo.mutation.AuthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   user.AuthTable,
+			Columns: []string{user.AuthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: auth.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AuthIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   user.AuthTable,
+			Columns: []string{user.AuthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: auth.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if uuo.mutation.CreateTasksCleared() {
 		edge := &sqlgraph.EdgeSpec{

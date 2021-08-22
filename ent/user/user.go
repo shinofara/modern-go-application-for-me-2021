@@ -9,12 +9,21 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// EdgeAuth holds the string denoting the auth edge name in mutations.
+	EdgeAuth = "auth"
 	// EdgeCreateTasks holds the string denoting the create_tasks edge name in mutations.
 	EdgeCreateTasks = "create_tasks"
 	// EdgeAssignTasks holds the string denoting the assign_tasks edge name in mutations.
 	EdgeAssignTasks = "assign_tasks"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// AuthTable is the table that holds the auth relation/edge.
+	AuthTable = "users"
+	// AuthInverseTable is the table name for the Auth entity.
+	// It exists in this package in order to avoid circular dependency with the "auth" package.
+	AuthInverseTable = "auths"
+	// AuthColumn is the table column denoting the auth relation/edge.
+	AuthColumn = "auth_user"
 	// CreateTasksTable is the table that holds the create_tasks relation/edge.
 	CreateTasksTable = "tasks"
 	// CreateTasksInverseTable is the table name for the Task entity.
@@ -37,10 +46,21 @@ var Columns = []string{
 	FieldName,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "users"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"auth_user",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}

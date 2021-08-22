@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -27,7 +28,6 @@ type AuthQuery struct {
 	predicates []predicate.Auth
 	// eager-loading edges.
 	withUser *UserQuery
-	withFKs  bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -78,7 +78,7 @@ func (aq *AuthQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(auth.Table, auth.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, auth.UserTable, auth.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, auth.UserTable, auth.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -349,18 +349,11 @@ func (aq *AuthQuery) prepareQuery(ctx context.Context) error {
 func (aq *AuthQuery) sqlAll(ctx context.Context) ([]*Auth, error) {
 	var (
 		nodes       = []*Auth{}
-		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
 		loadedTypes = [1]bool{
 			aq.withUser != nil,
 		}
 	)
-	if aq.withUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, auth.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &Auth{config: aq.config}
 		nodes = append(nodes, node)
@@ -382,31 +375,30 @@ func (aq *AuthQuery) sqlAll(ctx context.Context) ([]*Auth, error) {
 	}
 
 	if query := aq.withUser; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*Auth)
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Auth)
 		for i := range nodes {
-			if nodes[i].auth_user == nil {
-				continue
-			}
-			fk := *nodes[i].auth_user
-			if _, ok := nodeids[fk]; !ok {
-				ids = append(ids, fk)
-			}
-			nodeids[fk] = append(nodeids[fk], nodes[i])
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
 		}
-		query.Where(user.IDIn(ids...))
+		query.withFKs = true
+		query.Where(predicate.User(func(s *sql.Selector) {
+			s.Where(sql.InValues(auth.UserColumn, fks...))
+		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
+			fk := n.auth_user
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "auth_user" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "auth_user" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "auth_user" returned %v for node %v`, *fk, n.ID)
 			}
-			for i := range nodes {
-				nodes[i].Edges.User = n
-			}
+			node.Edges.User = n
 		}
 	}
 

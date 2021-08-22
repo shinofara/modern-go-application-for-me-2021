@@ -22,6 +22,10 @@ func (User) Fields() []ent.Field {
 // Edges of the User.
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.From("auth", Auth.Type).
+			Unique().
+			Required().
+			Ref("user"),
 		edge.To("create_tasks", Task.Type),
 		edge.To("assign_tasks", Task.Type),
 	}

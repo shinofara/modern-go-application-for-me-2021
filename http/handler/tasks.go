@@ -34,18 +34,7 @@ func (h *Handler) PostTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.DB.User.Get(ctx, 10)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-
-	tc := h.DB.Task.Create()
-
-	if _, err := tc.SetTitle(p.Title).
-		SetCreator(user).
-		SetAssign(user).Save(ctx);
-	err != nil {
+	if err := h.UseCase.CreateTask(ctx, &p); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

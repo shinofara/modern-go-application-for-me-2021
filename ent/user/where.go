@@ -210,6 +210,34 @@ func NameContainsFold(v string) predicate.User {
 	})
 }
 
+// HasAuth applies the HasEdge predicate on the "auth" edge.
+func HasAuth() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AuthTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, AuthTable, AuthColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAuthWith applies the HasEdge predicate on the "auth" edge with a given conditions (other predicates).
+func HasAuthWith(preds ...predicate.Auth) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(AuthInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, AuthTable, AuthColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasCreateTasks applies the HasEdge predicate on the "create_tasks" edge.
 func HasCreateTasks() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

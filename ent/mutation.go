@@ -1021,6 +1021,8 @@ type UserMutation struct {
 	id                  *int
 	name                *string
 	clearedFields       map[string]struct{}
+	auth                *int
+	clearedauth         bool
 	create_tasks        map[int]struct{}
 	removedcreate_tasks map[int]struct{}
 	clearedcreate_tasks bool
@@ -1145,6 +1147,45 @@ func (m *UserMutation) OldName(ctx context.Context) (v string, err error) {
 // ResetName resets all changes to the "name" field.
 func (m *UserMutation) ResetName() {
 	m.name = nil
+}
+
+// SetAuthID sets the "auth" edge to the Auth entity by id.
+func (m *UserMutation) SetAuthID(id int) {
+	m.auth = &id
+}
+
+// ClearAuth clears the "auth" edge to the Auth entity.
+func (m *UserMutation) ClearAuth() {
+	m.clearedauth = true
+}
+
+// AuthCleared reports if the "auth" edge to the Auth entity was cleared.
+func (m *UserMutation) AuthCleared() bool {
+	return m.clearedauth
+}
+
+// AuthID returns the "auth" edge ID in the mutation.
+func (m *UserMutation) AuthID() (id int, exists bool) {
+	if m.auth != nil {
+		return *m.auth, true
+	}
+	return
+}
+
+// AuthIDs returns the "auth" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AuthID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) AuthIDs() (ids []int) {
+	if id := m.auth; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAuth resets all changes to the "auth" edge.
+func (m *UserMutation) ResetAuth() {
+	m.auth = nil
+	m.clearedauth = false
 }
 
 // AddCreateTaskIDs adds the "create_tasks" edge to the Task entity by ids.
@@ -1373,7 +1414,10 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
+	if m.auth != nil {
+		edges = append(edges, user.EdgeAuth)
+	}
 	if m.create_tasks != nil {
 		edges = append(edges, user.EdgeCreateTasks)
 	}
@@ -1387,6 +1431,10 @@ func (m *UserMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *UserMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case user.EdgeAuth:
+		if id := m.auth; id != nil {
+			return []ent.Value{*id}
+		}
 	case user.EdgeCreateTasks:
 		ids := make([]ent.Value, 0, len(m.create_tasks))
 		for id := range m.create_tasks {
@@ -1405,7 +1453,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedcreate_tasks != nil {
 		edges = append(edges, user.EdgeCreateTasks)
 	}
@@ -1437,7 +1485,10 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
+	if m.clearedauth {
+		edges = append(edges, user.EdgeAuth)
+	}
 	if m.clearedcreate_tasks {
 		edges = append(edges, user.EdgeCreateTasks)
 	}
@@ -1451,6 +1502,8 @@ func (m *UserMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
+	case user.EdgeAuth:
+		return m.clearedauth
 	case user.EdgeCreateTasks:
 		return m.clearedcreate_tasks
 	case user.EdgeAssignTasks:
@@ -1463,6 +1516,9 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *UserMutation) ClearEdge(name string) error {
 	switch name {
+	case user.EdgeAuth:
+		m.ClearAuth()
+		return nil
 	}
 	return fmt.Errorf("unknown User unique edge %s", name)
 }
@@ -1471,6 +1527,9 @@ func (m *UserMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *UserMutation) ResetEdge(name string) error {
 	switch name {
+	case user.EdgeAuth:
+		m.ResetAuth()
+		return nil
 	case user.EdgeCreateTasks:
 		m.ResetCreateTasks()
 		return nil

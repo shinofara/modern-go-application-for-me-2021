@@ -22,8 +22,7 @@ type Auth struct {
 	Password string `json:"password,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AuthQuery when eager-loading is set.
-	Edges     AuthEdges `json:"edges"`
-	auth_user *int
+	Edges AuthEdges `json:"edges"`
 }
 
 // AuthEdges holds the relations/edges for other nodes in the graph.
@@ -58,8 +57,6 @@ func (*Auth) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case auth.FieldEmail, auth.FieldPassword:
 			values[i] = new(sql.NullString)
-		case auth.ForeignKeys[0]: // auth_user
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Auth", columns[i])
 		}
@@ -92,13 +89,6 @@ func (a *Auth) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field password", values[i])
 			} else if value.Valid {
 				a.Password = value.String
-			}
-		case auth.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field auth_user", value)
-			} else if value.Valid {
-				a.auth_user = new(int)
-				*a.auth_user = int(value.Int64)
 			}
 		}
 	}

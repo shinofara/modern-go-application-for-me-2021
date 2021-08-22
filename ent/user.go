@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fmt"
+	"mygo/ent/auth"
 	"mygo/ent/user"
 	"strings"
 
@@ -19,24 +20,41 @@ type User struct {
 	Name string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
-	Edges UserEdges `json:"edges"`
+	Edges     UserEdges `json:"edges"`
+	auth_user *int
 }
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
+	// Auth holds the value of the auth edge.
+	Auth *Auth `json:"auth,omitempty"`
 	// CreateTasks holds the value of the create_tasks edge.
 	CreateTasks []*Task `json:"create_tasks,omitempty"`
 	// AssignTasks holds the value of the assign_tasks edge.
 	AssignTasks []*Task `json:"assign_tasks,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
+}
+
+// AuthOrErr returns the Auth value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) AuthOrErr() (*Auth, error) {
+	if e.loadedTypes[0] {
+		if e.Auth == nil {
+			// The edge auth was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: auth.Label}
+		}
+		return e.Auth, nil
+	}
+	return nil, &NotLoadedError{edge: "auth"}
 }
 
 // CreateTasksOrErr returns the CreateTasks value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) CreateTasksOrErr() ([]*Task, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		return e.CreateTasks, nil
 	}
 	return nil, &NotLoadedError{edge: "create_tasks"}
@@ -45,7 +63,7 @@ func (e UserEdges) CreateTasksOrErr() ([]*Task, error) {
 // AssignTasksOrErr returns the AssignTasks value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) AssignTasksOrErr() ([]*Task, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.AssignTasks, nil
 	}
 	return nil, &NotLoadedError{edge: "assign_tasks"}
@@ -60,6 +78,8 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldName:
 			values[i] = new(sql.NullString)
+		case user.ForeignKeys[0]: // auth_user
+			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
 		}
@@ -87,9 +107,21 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				u.Name = value.String
 			}
+		case user.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field auth_user", value)
+			} else if value.Valid {
+				u.auth_user = new(int)
+				*u.auth_user = int(value.Int64)
+			}
 		}
 	}
 	return nil
+}
+
+// QueryAuth queries the "auth" edge of the User entity.
+func (u *User) QueryAuth() *AuthQuery {
+	return (&UserClient{config: u.config}).QueryAuth(u)
 }
 
 // QueryCreateTasks queries the "create_tasks" edge of the User entity.

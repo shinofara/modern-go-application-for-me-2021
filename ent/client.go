@@ -229,7 +229,7 @@ func (c *AuthClient) QueryUser(a *Auth) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(auth.Table, auth.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, auth.UserTable, auth.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, auth.UserTable, auth.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -447,6 +447,22 @@ func (c *UserClient) GetX(ctx context.Context, id int) *User {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryAuth queries the auth edge of a User.
+func (c *UserClient) QueryAuth(u *User) *AuthQuery {
+	query := &AuthQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(auth.Table, auth.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, user.AuthTable, user.AuthColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // QueryCreateTasks queries the create_tasks edge of a User.

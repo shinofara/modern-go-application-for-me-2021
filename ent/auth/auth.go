@@ -16,7 +16,7 @@ const (
 	// Table holds the table name of the auth in the database.
 	Table = "auths"
 	// UserTable is the table that holds the user relation/edge.
-	UserTable = "auths"
+	UserTable = "users"
 	// UserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
@@ -31,21 +31,10 @@ var Columns = []string{
 	FieldPassword,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "auths"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"auth_user",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
