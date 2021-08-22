@@ -3,6 +3,13 @@ package main
 import (
 	"context"
 	"flag"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/sdk/resource"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"log"
 	"mygo/config"
 	"mygo/ent"
@@ -70,10 +77,30 @@ func Server(ctx context.Context, p struct{
 		log.Println("DB Close")
 	}()
 
+	exporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
+	if err != nil {
+		log.Fatalf("creating stdout exporter: %v", err)
+	}
+
+	tp := tracesdk.NewTracerProvider(
+		// Always be sure to batch in production.
+		tracesdk.WithBatcher(exporter),
+		// Record information about this application in an Resource.
+		tracesdk.WithResource(resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceNameKey.String("hogehoge"),
+			attribute.String("environment", "development"),
+			attribute.Int64("ID", 123),
+		)),
+	)
+	otel.SetTracerProvider(tp)
+
 	r := chi.NewRouter()
 	oapi.HandlerFromMux(&p.Mux, r)
 	srv := &http.Server{
-		Handler: r,
+		Handler: otelhttp.NewHandler(r, "server",
+			otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
+		),
 		Addr:    "0.0.0.0:8080",
 	}
 
