@@ -12,6 +12,7 @@
 - スキーマ駆動でジェネレート
 - DBスキーマとコードにずれを起こさせない。
 - コマンドクエリの関心分離
+  - [参考記事1](https://little-hands.hatenablog.com/entry/2019/12/02/cqrs#DDD%E3%81%AE%E5%8F%82%E7%85%A7%E7%B3%BB%E5%87%A6%E7%90%86%E3%81%A7%E7%99%BA%E7%94%9F%E3%81%99%E3%82%8B%E8%AA%B2%E9%A1%8C)
 
 ## 設計
 
@@ -41,27 +42,42 @@ REST APIの開発には、[OpenAPI 3.0 ](https://github.com/OAI/OpenAPI-Specific
 
 ### Infrastructure
 
+シンプルに外側のclient実装ですね。DBとかTraceとかLoggerとか
+
 ### Config
 
-## スキーマを追加
+設定値などは、Envに持たせるパターンもあると思いますが、今回は[config.yml](environment/development/config.yml)に必要な設定をもたせる形にしました。
+理由は下記の通り
+
+1. Envの場合はどこからでも参照できてしまうリスクがある。
+   1. もちろん運用でカバーは可能
+   2. もちろんそれがOKという考えもあるが、ここでは必要な設定が無いとむしろpanicさせたいので、起動時に評価したい考え
+2. 全てがStringになってしまう。もちろん `os.Getenv` で取得後キャストするのもあり
+
+今回は秘密情報を管理はしていないですが、秘密情報もsecret.ymlなどyaml形式で渡せるようになります。
+GCPであればSecret Managerで管理して、起動時にマウントするなどします。
+
+## Memo
+
+### スキーマを追加
 
 ```
 go run entgo.io/ent/cmd/ent init User
 ```
 
-## モデルを作成
+### モデルを作成
 
 ```
 make model
 ```
 
-## マイグレーション
+### マイグレーション
 
 ```
 make migrate
 ```
 
-## マイグレーションの流れ
+### マイグレーションの流れ
 
 ```
 // env/schame/user.go
