@@ -2,35 +2,37 @@ package config
 
 import (
 	"mygo/infrastructure/database"
+	"mygo/infrastructure/logger"
 	"mygo/infrastructure/trace"
 	"os"
+
+	"go.uber.org/dig"
 
 	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	DB database.Config
-	Trace trace.Config
+	dig.Out
+
+	DB     *database.Config
+	Trace  *trace.Config
+	Logger *logger.Config
 }
 
-func DB(cfg *Config) *database.Config {
-	return &cfg.DB
+func (cfg Config) Clone() Config {
+	return cfg
 }
 
-func Trace(cfg *Config) *trace.Config {
-	return &cfg.Trace
-}
-
-func New(configFilePath string) (*Config, error) {
+func New(configFilePath string) (Config, error) {
 	configFile, err := os.Open(configFilePath)
 	if err != nil {
-		return nil, err
+		return Config{}, err
 	}
 	defer configFile.Close()
 	var cfg Config
 	if err := yaml.NewDecoder(configFile).Decode(&cfg); err != nil {
-		return nil, err
+		return Config{}, err
 	}
 
-	return &cfg, nil
+	return cfg, nil
 }

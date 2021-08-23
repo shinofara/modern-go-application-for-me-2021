@@ -21,13 +21,13 @@ func main() {
 	entOptions := []ent.Option{
 		ent.Debug(),
 	}
-	
+
 	cfg, err := config.New(configPath)
 	if err != nil {
 		panic(err)
 	}
 
-	client := database.NewClient(&cfg.DB, entOptions...)
+	client := database.NewClient(cfg.DB, entOptions...)
 	defer client.Close()
 	ctx := context.Background()
 

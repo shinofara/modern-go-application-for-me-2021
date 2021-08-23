@@ -35,10 +35,14 @@ func (h SentryHook) Run(e *zerolog.Event, level zerolog.Level, msg string) {
 	}
 }
 
+type Config struct {
+	Type string
+}
+
 type Logger struct{}
 
-func NewLogger(env string) *Logger {
-	if env == "development" {
+func NewLogger(cfg *Config) *Logger {
+	if cfg.Type != "json" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
 	}
 	zerolog.TimestampFieldName = "timestamp"

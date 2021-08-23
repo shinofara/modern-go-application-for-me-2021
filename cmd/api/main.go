@@ -39,7 +39,12 @@ func main() {
 	flag.StringVar(&configPath, "config", "", "path to config yaml path")
 	flag.Parse()
 
-	l := logger.NewLogger("development")
+	cfg, err := config.New(configPath)
+	if err != nil {
+		panic(err)
+	}
+
+	l := logger.NewLogger(cfg.Logger)
 	sh, err := logger.NewSentryHook()
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
@@ -56,19 +61,11 @@ func main() {
 		repository.NewRepository,
 		usecase.NewUseCase,
 		database.NewClient,
-		config.DB,
-		config.Trace,
+		cfg.Clone,
 		trace.NewExporter,
 	}
 
 	container := dig.New()
-
-	if err := container.Provide(func() (*config.Config, error) {
-		return config.New(configPath)
-	}); err != nil {
-		panic(err)
-	}
-
 	for _, p := range provides {
 		if err := container.Provide(p); err != nil {
 			panic(err)
