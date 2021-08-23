@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"flag"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
-	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"log"
 	"mygo/config"
@@ -43,6 +45,7 @@ func main() {
 		usecase.NewUseCase,
 		database.NewClient,
 		config.DB,
+		JaegerExporter,
 	}
 
 	container := dig.New()
@@ -65,38 +68,44 @@ func main() {
 	}
 }
 
+func StdoutExporter() (tracesdk.SpanExporter, error){
+	return stdouttrace.New(stdouttrace.WithPrettyPrint())
+}
+
+func JaegerExporter() (tracesdk.SpanExporter, error){
+	url := "http://trace:14268/api/traces"
+	return jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
+}
+
 func Server(ctx context.Context, p struct{
 	dig.In
 
 	// Server起動時に利用する引数は可変の可能性がある為、struct化してDIにて注入
 	Mux handler.Handler
 	DB *ent.Client
+	TraceExporter tracesdk.SpanExporter
 }) error {
 	defer func() {
 		p.DB.Close()
 		log.Println("DB Close")
 	}()
 
-	exporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
-	if err != nil {
-		log.Fatalf("creating stdout exporter: %v", err)
-	}
-
 	tp := tracesdk.NewTracerProvider(
 		// Always be sure to batch in production.
-		tracesdk.WithBatcher(exporter),
+		tracesdk.WithBatcher(p.TraceExporter),
 		// Record information about this application in an Resource.
 		tracesdk.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String("hogehoge"),
+			semconv.ServiceNameKey.String("example"),
 			attribute.String("environment", "development"),
-			attribute.Int64("ID", 123),
 		)),
 	)
 	otel.SetTracerProvider(tp)
 
 	r := chi.NewRouter()
+	r.Use(otelmux.Middleware("example", otelmux.WithTracerProvider(tp)))
 	oapi.HandlerFromMux(&p.Mux, r)
+
 	srv := &http.Server{
 		Handler: otelhttp.NewHandler(r, "server",
 			otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),

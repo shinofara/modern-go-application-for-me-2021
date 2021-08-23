@@ -27,3 +27,8 @@ services:
     command: ["make", "run"]
     ports:
       - 8080:8080
+
+  trace:
+    image: jaegertracing/all-in-one:1
+    ports:
+      - 127.0.0.1:16686:16686
