@@ -10,7 +10,7 @@ import (
 // GetMyTasks Get: /my_tasks
 func (h *Handler) GetMyTasks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	user, err := h.DB.User.Get(ctx, 10)
+	user, err := h.db.User.Get(ctx, 10)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -33,7 +33,7 @@ func (h *Handler) PostTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.UseCase.CreateTask(ctx, &p); err != nil {
+	if err := h.useCase.CreateTask(ctx, &p); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

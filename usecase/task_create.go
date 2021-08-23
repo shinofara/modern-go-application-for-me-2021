@@ -11,7 +11,7 @@ import (
 // タスクのDB登録と、タスクassign通知
 func (u *UseCase) CreateTask(ctx context.Context, p *oapi.Task) error {
 	// 一旦意味も無くtransactionで書いてる
-	tx, err := u.DB.BeginTx(ctx, nil)
+	tx, err := u.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (u *UseCase) CreateTask(ctx context.Context, p *oapi.Task) error {
 		return err
 	}
 
-	t, err := u.Repository.CreateTask(ctx, tx, p.Title, user, user)
+	t, err := u.repository.CreateTask(ctx, tx, p.Title, user, user)
 	if err != nil {
 		return err
 	}
@@ -43,5 +43,5 @@ func (u *UseCase) CreateTask(ctx context.Context, p *oapi.Task) error {
 		return err
 	}
 
-	return u.Mailer.Send(a.Email, fmt.Sprintf("%s宛にID%dの「%s」を通知しました", a.Email, t.ID, t.Title))
+	return u.mailer.Send(a.Email, fmt.Sprintf("%s宛にID%dの「%s」を通知しました", a.Email, t.ID, t.Title))
 }

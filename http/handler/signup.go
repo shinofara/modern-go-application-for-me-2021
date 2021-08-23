@@ -17,7 +17,7 @@ func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.UseCase.Signup(ctx, &p); err != nil {
+	if err := h.useCase.Signup(ctx, &p); err != nil {
 		log.Println(err)
 		fmt.Fprint(w, err)
 		return
@@ -34,7 +34,7 @@ func (h *Handler) PostSignin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	a, err := h.DB.Auth.Query().Where(auth.Email(p.Email), auth.Password(p.Password)).Only(ctx)
+	a, err := h.db.Auth.Query().Where(auth.Email(p.Email), auth.Password(p.Password)).Only(ctx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
