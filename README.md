@@ -7,9 +7,11 @@
 
 よくあるシンプルなTODO管理APIをOpen APIという形で提供します。
 
-## 前提
+## 前提となるキーワード
 
-可能な限り記述するコード量は少なくしたい
+- スキーマ駆動でジェネレート
+- DBスキーマとコードにずれを起こさせない。
+- コマンドクエリの関心分離
 
 ## 設計
 
@@ -27,8 +29,13 @@ REST APIの開発には、[OpenAPI 3.0 ](https://github.com/OAI/OpenAPI-Specific
 それに合わせて、`oapi-codegen` 実行オプションで `-generate chi-server` を指定して、`chi` 用のインターフェースをジェネレートしました。
 
 そのため、[http/handler](http/handler)には、oapi-codegenで作成したインターフェースの実装を、`net/http` 用のハンドラーとして作成してます。
+またhandlerの実装方針としては、ormからシンプルに取得してくるだけなどで、あればその他に依存させる事なく、直接ormを利用しています。
+つまりhandlerはusecaseにもrepositoryにも依存しないで、DBからデータを取得できる状態です。
 
 ### UseCase
+
+[UseCase](./usecase)では特定の処理を行う際に複数のdomain操作や、インフラ操作が発生するときに利用
+例えばユーザ登録というケースで、認証情報登録、ユーザ情報登録、登録完了メール送信とDB操作とメール送信など一つのケースに複数の処理が含まれる場合に利用しています。
 
 ### Repository
 
