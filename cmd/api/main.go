@@ -7,8 +7,6 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/jaeger"
-	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	"go.opentelemetry.io/otel/sdk/resource"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
@@ -19,6 +17,7 @@ import (
 	oapi "mygo/http/oapi"
 	"mygo/infrastructure/database"
 	"mygo/infrastructure/mailer"
+	"mygo/infrastructure/trace"
 	"mygo/repository"
 	"mygo/usecase"
 	"os"
@@ -45,7 +44,8 @@ func main() {
 		usecase.NewUseCase,
 		database.NewClient,
 		config.DB,
-		JaegerExporter,
+		config.Trace,
+		trace.NewExporter,
 	}
 
 	container := dig.New()
@@ -66,15 +66,6 @@ func main() {
 	if err := container.Invoke(Server); err != nil {
 		panic(err)
 	}
-}
-
-func StdoutExporter() (tracesdk.SpanExporter, error){
-	return stdouttrace.New(stdouttrace.WithPrettyPrint())
-}
-
-func JaegerExporter() (tracesdk.SpanExporter, error){
-	url := "http://trace:14268/api/traces"
-	return jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
 }
 
 func Server(ctx context.Context, p struct{

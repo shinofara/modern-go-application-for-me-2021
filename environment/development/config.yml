@@ -5,3 +5,7 @@ db:
   host: db
   port: 3306
   db_name: example
+
+trace:
+  jaeger:
+    url: http://trace:14268/api/traces
