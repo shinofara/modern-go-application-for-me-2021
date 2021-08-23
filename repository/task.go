@@ -16,7 +16,7 @@ func NewRepository(db *ent.Client) *Repository {
 }
 
 // Create tasks作成時に関わるデータの永続化
-func (r *Repository) CreateTask(ctx context.Context,tx *ent.Tx ,title string, creator, assign *ent.User) (*ent.Task, error) {
+func (r *Repository) CreateTask(ctx context.Context, tx *ent.Tx, title string, creator, assign *ent.User) (*ent.Task, error) {
 	tc := tx.Task.Create()
 	return tc.SetTitle(title).
 		SetCreator(creator).

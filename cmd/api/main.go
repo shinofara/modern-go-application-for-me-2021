@@ -3,19 +3,12 @@ package main
 import (
 	"context"
 	"flag"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/sdk/resource"
-	tracesdk "go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
-	"log"
 	"mygo/config"
 	"mygo/ent"
 	"mygo/http/handler"
 	oapi "mygo/http/oapi"
 	"mygo/infrastructure/database"
+	"mygo/infrastructure/logger"
 	"mygo/infrastructure/mailer"
 	"mygo/infrastructure/trace"
 	"mygo/repository"
@@ -24,6 +17,16 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/rs/zerolog/log"
+
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/sdk/resource"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/dig"
@@ -35,6 +38,16 @@ func main() {
 	var configPath string
 	flag.StringVar(&configPath, "config", "", "path to config yaml path")
 	flag.Parse()
+
+	l := logger.NewLogger("development")
+	sh, err := logger.NewSentryHook()
+	if err != nil {
+		log.Fatal().Err(err).Msg("")
+	}
+	_ = l
+	_ = sh
+	//実際利用する差異はこのあたりを整える
+	//l.AddHook(sh)
 
 	provides := []interface{}{
 		context.Background,
@@ -68,17 +81,17 @@ func main() {
 	}
 }
 
-func Server(ctx context.Context, p struct{
+func Server(ctx context.Context, p struct {
 	dig.In
 
 	// Server起動時に利用する引数は可変の可能性がある為、struct化してDIにて注入
-	Mux handler.Handler
-	DB *ent.Client
+	Mux           handler.Handler
+	DB            *ent.Client
 	TraceExporter tracesdk.SpanExporter
 }) error {
 	defer func() {
 		p.DB.Close()
-		log.Println("DB Close")
+		log.Debug().Msg("DB Close")
 	}()
 
 	tp := tracesdk.NewTracerProvider(
@@ -101,14 +114,14 @@ func Server(ctx context.Context, p struct{
 		Handler: otelhttp.NewHandler(r, "server",
 			otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
 		),
-		Addr:    "0.0.0.0:8080",
+		Addr: "0.0.0.0:8080",
 	}
 
 	go func() {
-		log.Println("run: " + srv.Addr)
+		log.Debug().Msgf("run: " + srv.Addr)
 		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 			// Error starting or closing listener:
-			log.Fatalln("Server closed with error:", err)
+			log.Fatal().Msgf("Server closed with error: %s", err)
 		}
 	}()
 
