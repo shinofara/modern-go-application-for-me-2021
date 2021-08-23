@@ -1,13 +1,10 @@
 package database
 
 import (
-	"context"
-	"database/sql"
-	"database/sql/driver"
+	"github.com/XSAM/otelsql"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"mygo/ent"
 
-	"contrib.go.opencensus.io/integrations/ocsql"
-	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/go-sql-driver/mysql"
 )
@@ -19,24 +16,6 @@ type Config struct {
 	Host   string
 	Port   string
 	DBName string `yaml:"db_name"`
-}
-
-type connector struct {
-	dsn string
-}
-
-func (c connector) Connect(context.Context) (driver.Conn, error) {
-	return c.Driver().Open(c.dsn)
-}
-
-func (connector) Driver() driver.Driver {
-	return ocsql.Wrap(
-		mysql.MySQLDriver{},
-		ocsql.WithAllTraceOptions(),
-		ocsql.WithRowsClose(false),
-		ocsql.WithRowsNext(false),
-		ocsql.WithDisableErrSkip(true),
-	)
 }
 
 // Open new connection and start stats recorder.
@@ -51,9 +30,15 @@ func NewClient(cfg *Config, opts ...ent.Option) *ent.Client {
 		ParseTime:            true,
 	}
 
-	db := sql.OpenDB(connector{mc.FormatDSN()})
-	// Create an ent.Driver from `db`.
-	drv := entsql.OpenDB(dialect.MySQL, db)
+	driverName, err := otelsql.Register("mysql", semconv.DBSystemMySQL.Value.AsString())
+	if err != nil {
+		panic(err)
+	}
+
+	drv, err := entsql.Open(driverName, mc.FormatDSN())
+	if err != nil {
+		panic(err)
+	}
 
 	o := []ent.Option{
 		ent.Driver(drv),
