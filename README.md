@@ -57,21 +57,28 @@ REST APIの開発には、[OpenAPI 3.0 ](https://github.com/OAI/OpenAPI-Specific
 今回は秘密情報を管理はしていないですが、秘密情報もsecret.ymlなどyaml形式で渡せるようになります。
 GCPであればSecret Managerで管理して、起動時にマウントするなどします。
 
-## Memo
+## Usage
 
-### スキーマを追加
+### モデル関連
+
+[facebook/ent](https://github.com/ent/ent)を利用していますので、マイグレーションの為に別のファイルが存在するなどは無いです。
+entの使い方は別途どこかのドキュメントリンクを記述します。
+
+#### モデルの準備
+
+モデルの追加は下記のコマンドを実行する事で作成できます。
 
 ```
 go run entgo.io/ent/cmd/ent init User
 ```
 
-### モデルを作成
+#### モデルを元にORM作成とマイグレーションファイルの更新
 
 ```
 make model
 ```
 
-### マイグレーション
+### マイグレーション実行
 
 ```
 make migrate
