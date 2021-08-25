@@ -2,9 +2,10 @@ package handler
 
 import (
 	"fmt"
-	"github.com/goccy/go-json"
-	"mygo/http/oapi"
 	"net/http"
+
+	"github.com/goccy/go-json"
+	"github.com/shinofara/example-go-2021/http/oapi"
 )
 
 // GetMyTasks Get: /my_tasks

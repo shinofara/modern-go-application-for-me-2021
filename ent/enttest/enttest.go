@@ -4,9 +4,11 @@ package enttest
 
 import (
 	"context"
-	"mygo/ent"
+
+	"github.com/shinofara/example-go-2021/ent"
+
 	// required by schema hooks.
-	_ "mygo/ent/runtime"
+	_ "github.com/shinofara/example-go-2021/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

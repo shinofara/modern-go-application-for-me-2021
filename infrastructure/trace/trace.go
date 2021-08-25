@@ -23,11 +23,11 @@ func NewExporter(cfg *Config) (tracesdk.SpanExporter, error) {
 	return StdoutExporter()
 }
 
-func StdoutExporter() (tracesdk.SpanExporter, error){
+func StdoutExporter() (tracesdk.SpanExporter, error) {
 	return stdouttrace.New(stdouttrace.WithPrettyPrint())
 }
 
-func JaegerExporter(cfg *Jaeger) (tracesdk.SpanExporter, error){
+func JaegerExporter(cfg *Jaeger) (tracesdk.SpanExporter, error) {
 	url := cfg.URL
 	return jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
 }

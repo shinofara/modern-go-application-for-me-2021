@@ -1,7 +1,7 @@
 package database
 
 import (
-	"mygo/ent"
+	"github.com/shinofara/example-go-2021/ent"
 
 	"github.com/XSAM/otelsql"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"

@@ -1,10 +1,11 @@
 package config
 
 import (
-	"mygo/infrastructure/database"
-	"mygo/infrastructure/logger"
-	"mygo/infrastructure/trace"
 	"os"
+
+	"github.com/shinofara/example-go-2021/infrastructure/database"
+	"github.com/shinofara/example-go-2021/infrastructure/logger"
+	"github.com/shinofara/example-go-2021/infrastructure/trace"
 
 	"go.uber.org/dig"
 

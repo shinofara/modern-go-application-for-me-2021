@@ -2,11 +2,12 @@ package handler
 
 import (
 	"fmt"
-	"github.com/goccy/go-json"
 	"log"
-	"mygo/ent/auth"
-	oapi "mygo/http/oapi"
 	"net/http"
+
+	"github.com/goccy/go-json"
+	"github.com/shinofara/example-go-2021/ent/auth"
+	oapi "github.com/shinofara/example-go-2021/http/oapi"
 )
 
 func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {

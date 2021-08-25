@@ -6,8 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"mygo/ent/auth"
-	"mygo/ent/user"
+
+	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/example-go-2021/ent/user"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

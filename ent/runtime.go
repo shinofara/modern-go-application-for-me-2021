@@ -3,10 +3,10 @@
 package ent
 
 import (
-	"mygo/ent/auth"
-	"mygo/ent/schema"
-	"mygo/ent/task"
-	"mygo/ent/user"
+	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/example-go-2021/ent/schema"
+	"github.com/shinofara/example-go-2021/ent/task"
+	"github.com/shinofara/example-go-2021/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code

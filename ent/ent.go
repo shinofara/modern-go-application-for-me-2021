@@ -5,9 +5,10 @@ package ent
 import (
 	"errors"
 	"fmt"
-	"mygo/ent/auth"
-	"mygo/ent/task"
-	"mygo/ent/user"
+
+	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/example-go-2021/ent/task"
+	"github.com/shinofara/example-go-2021/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"

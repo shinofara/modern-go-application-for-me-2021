@@ -3,7 +3,8 @@ package usecase
 import (
 	"context"
 	"database/sql"
-	"mygo/http/oapi"
+
+	"github.com/shinofara/example-go-2021/http/oapi"
 )
 
 // Signup ユーザ登録時に利用

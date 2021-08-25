@@ -4,10 +4,11 @@ package ent
 
 import (
 	"fmt"
-	"mygo/ent/task"
-	"mygo/ent/user"
 	"strings"
 	"time"
+
+	"github.com/shinofara/example-go-2021/ent/task"
+	"github.com/shinofara/example-go-2021/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 )

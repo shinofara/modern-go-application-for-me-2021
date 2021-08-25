@@ -3,8 +3,9 @@
 package task
 
 import (
-	"mygo/ent/predicate"
 	"time"
+
+	"github.com/shinofara/example-go-2021/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

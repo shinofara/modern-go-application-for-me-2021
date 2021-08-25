@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"mygo/ent"
-	"mygo/infrastructure/mailer"
-	"mygo/repository"
-	"mygo/usecase"
+	"github.com/shinofara/example-go-2021/ent"
+	"github.com/shinofara/example-go-2021/infrastructure/mailer"
+	"github.com/shinofara/example-go-2021/repository"
+	"github.com/shinofara/example-go-2021/usecase"
 
 	"go.uber.org/dig"
 )

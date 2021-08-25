@@ -5,7 +5,8 @@ package hook
 import (
 	"context"
 	"fmt"
-	"mygo/ent"
+
+	"github.com/shinofara/example-go-2021/ent"
 )
 
 // The AuthFunc type is an adapter to allow the use of ordinary

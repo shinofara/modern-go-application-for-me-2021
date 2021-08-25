@@ -5,8 +5,9 @@ package ent
 import (
 	"context"
 	"fmt"
-	"mygo/ent/auth"
-	"mygo/ent/predicate"
+
+	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/example-go-2021/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

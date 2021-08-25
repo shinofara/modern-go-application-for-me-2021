@@ -5,8 +5,9 @@ package ent
 import (
 	"context"
 	"fmt"
-	"mygo/ent/predicate"
-	"mygo/ent/task"
+
+	"github.com/shinofara/example-go-2021/ent/predicate"
+	"github.com/shinofara/example-go-2021/ent/task"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

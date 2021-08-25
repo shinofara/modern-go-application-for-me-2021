@@ -6,10 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"mygo/ent/auth"
-	"mygo/ent/predicate"
-	"mygo/ent/task"
-	"mygo/ent/user"
+
+	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/example-go-2021/ent/predicate"
+	"github.com/shinofara/example-go-2021/ent/task"
+	"github.com/shinofara/example-go-2021/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

@@ -1,9 +1,9 @@
 package usecase
 
 import (
-	"mygo/ent"
-	"mygo/infrastructure/mailer"
-	"mygo/repository"
+	"github.com/shinofara/example-go-2021/ent"
+	"github.com/shinofara/example-go-2021/infrastructure/mailer"
+	"github.com/shinofara/example-go-2021/repository"
 
 	"go.uber.org/dig"
 )

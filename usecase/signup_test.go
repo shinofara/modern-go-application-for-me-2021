@@ -3,12 +3,13 @@ package usecase
 import (
 	"context"
 	"errors"
-	"mygo/ent/auth"
-	"mygo/http/oapi"
-	mock_mailer "mygo/mock"
-	"mygo/repository"
-	"mygo/testsupport/mysql"
 	"testing"
+
+	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/example-go-2021/http/oapi"
+	mock_mailer "github.com/shinofara/example-go-2021/mock"
+	"github.com/shinofara/example-go-2021/repository"
+	"github.com/shinofara/example-go-2021/testsupport/mysql"
 
 	"github.com/golang/mock/gomock"
 )

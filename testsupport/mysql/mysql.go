@@ -3,10 +3,11 @@ package mysql
 import (
 	"context"
 	"log"
-	"mygo/ent"
-	"mygo/ent/migrate"
-	"mygo/infrastructure/database"
 	"testing"
+
+	"github.com/shinofara/example-go-2021/ent"
+	"github.com/shinofara/example-go-2021/ent/migrate"
+	"github.com/shinofara/example-go-2021/infrastructure/database"
 
 	"github.com/DATA-DOG/go-txdb"
 

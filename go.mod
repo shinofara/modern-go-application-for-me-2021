@@ -1,4 +1,4 @@
-module mygo
+module github.com/shinofara/example-go-2021
 
 go 1.17
 

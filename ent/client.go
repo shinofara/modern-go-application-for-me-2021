@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"log"
 
-	"mygo/ent/migrate"
+	"github.com/shinofara/example-go-2021/ent/migrate"
 
-	"mygo/ent/auth"
-	"mygo/ent/task"
-	"mygo/ent/user"
+	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/example-go-2021/ent/task"
+	"github.com/shinofara/example-go-2021/ent/user"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"

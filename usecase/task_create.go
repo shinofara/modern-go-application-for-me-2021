@@ -4,7 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"mygo/http/oapi"
+
+	"github.com/shinofara/example-go-2021/http/oapi"
 )
 
 // CreateTask タスク作成
