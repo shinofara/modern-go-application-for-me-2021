@@ -77,7 +77,7 @@ entの使い方は別途どこかのドキュメントリンクを記述しま�
 モデルの追加は下記のコマンドを実行する事で作成できます。
 
 ```
-go run entgo.io/ent/cmd/ent init User
+go run entgo.io/ent/cmd/ent@latest init User
 ```
 
 #### モデルを元にORM作成とマイグレーションファイルの更新

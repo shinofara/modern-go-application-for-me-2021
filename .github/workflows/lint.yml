@@ -11,6 +11,8 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: 1.17
+    - name: build oapi
+      run: make oapi-generate
     - name: get
       run: go get ./...
     - name: run golangci-lint
