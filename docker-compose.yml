@@ -11,20 +11,18 @@ services:
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
 
   migration:
-    build:
-      context: .
+    image: golang:1.17
     working_dir: /work
     volumes:
-      - .:/work
-    entrypoint: ["go", "run", "cmd/migration/main.go"]
+      - .:/work:ro
+    entrypoint: ["go", "run", "cmd/migration/main.go", "--dryrun=false", "--config", "environment/development/config.yml"]
 
   app:
-    build:
-      context: .
+    image: golang:1.17
     working_dir: /work
     volumes:
     - .:/work
-    command: ["make", "run"]
+    entrypoint: ["go", "run", "github.com/cosmtrek/air@latest", "-c", ".air.toml"]
     ports:
       - 8080:8080
 
