@@ -9,6 +9,7 @@ require (
 	github.com/getsentry/sentry-go v0.11.0
 	github.com/go-chi/chi/v5 v5.0.3
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/goccy/go-json v0.7.7
 	github.com/golang/mock v1.6.0
 	github.com/rs/zerolog v1.23.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.22.0
@@ -25,7 +26,6 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
-	github.com/goccy/go-json v0.7.7 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -35,5 +35,5 @@ require (
 	go.opentelemetry.io/otel/metric v0.22.0 // indirect
 	go.opentelemetry.io/otel/trace v1.0.0-RC2 // indirect
 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
