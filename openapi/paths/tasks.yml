@@ -1,0 +1,11 @@
+post:
+  requestBody:
+    description: task
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/Task.yml
+  responses:
+    '200':
+      description: response

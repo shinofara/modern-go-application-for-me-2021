@@ -1,6 +1,10 @@
-oapi-generate:
-	go run github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest -generate types -package oapi openapi.yaml > http/oapi/types.gen.go
-	go run github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest -generate chi-server -package oapi openapi.yaml > http/oapi/server.gen.go
+oapi-merge:
+	@docker run --rm -v "${PWD}/openapi:/w" -w /w openapitools/openapi-generator-cli generate \
+	-g openapi-yaml -i openapi.yaml -o generated
+
+oapi-generate: oapi-merge
+	@go run github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest -generate types -package oapi openapi/generated/openapi/openapi.yaml > http/oapi/types.gen.go;
+	@go run github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest -generate chi-server -package oapi openapi/generated/openapi/openapi.yaml > http/oapi/server.gen.go
 
 run: migrate
 	docker compose up app

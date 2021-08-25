@@ -11,7 +11,7 @@ import (
 
 func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var p oapi.Signup
+	var p oapi.SignupRequest
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -28,7 +28,7 @@ func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) PostSignin(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var p oapi.Signin
+	var p oapi.SigninRequest
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

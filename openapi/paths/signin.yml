@@ -1,0 +1,11 @@
+post:
+  requestBody:
+    description: signin
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/SigninRequest.yml
+  responses:
+    '200':
+      description: response

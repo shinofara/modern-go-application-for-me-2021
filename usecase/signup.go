@@ -7,7 +7,7 @@ import (
 )
 
 // Signup ユーザ登録時に利用
-func (u *UseCase) Signup(ctx context.Context, p *oapi.Signup) error {
+func (u *UseCase) Signup(ctx context.Context, p *oapi.SignupRequest) error {
 	tx, err := u.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err

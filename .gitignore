@@ -1,3 +1,4 @@
 tmp
 mock/*.go
 http/oapi/*.go
+openapi/generated

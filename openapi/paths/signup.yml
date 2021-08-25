@@ -1,0 +1,11 @@
+post:
+  requestBody:
+    description: signup
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/SignupRequest.yml
+  responses:
+    '200':
+      description: response

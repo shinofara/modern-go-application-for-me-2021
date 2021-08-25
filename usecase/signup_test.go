@@ -31,7 +31,7 @@ func TestUseCase_Signup(t *testing.T) {
 	}
 
 	t.Run("Success", func(t *testing.T) {
-		if err := uc.Signup(ctx, &oapi.Signup{
+		if err := uc.Signup(ctx, &oapi.SignupRequest{
 			Name:     "test",
 			Email:    "test1@example.com",
 			Password: "test",
@@ -41,7 +41,7 @@ func TestUseCase_Signup(t *testing.T) {
 	})
 
 	t.Run("Failed send email", func(t *testing.T) {
-		if err := uc.Signup(ctx, &oapi.Signup{
+		if err := uc.Signup(ctx, &oapi.SignupRequest{
 			Name:     "test",
 			Email:    "test2@example.com",
 			Password: "test",
@@ -58,7 +58,7 @@ func TestUseCase_Signup(t *testing.T) {
 		a := client.Auth.Create().SetEmail("test3@example.com").SetPassword("test3").SaveX(ctx)
 		u := client.User.Create().SetName("test3").SetAuth(a).SaveX(ctx)
 
-		if err := uc.Signup(ctx, &oapi.Signup{
+		if err := uc.Signup(ctx, &oapi.SignupRequest{
 			Name:     u.Name,
 			Email:    a.Email,
 			Password: a.Password,

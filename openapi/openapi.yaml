@@ -1,0 +1,24 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Example API
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  description: Example
+  contact:
+    name: Example
+tags:
+  - name: user
+    description: user
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /tasks:
+    $ref: ./paths/tasks.yml
+  /my_tasks:
+    $ref: ./paths/my_tasks.yml
+  /signin:
+    $ref: ./paths/signin.yml
+  /signup:
+    $ref: ./paths/signup.yml
