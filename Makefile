@@ -14,8 +14,13 @@ migrate:
 migrate-dryrun:
 	docker compose run --rm migration
 
+mockgen:
+	go install github.com/golang/mock/mockgen@v1.6.0
+	go run github.com/sanposhiho/gomockhandler@latest -f mockgen
+
 init:
 	go get ./...
 	$(MAKE) model
 	$(MAKE) oapi-generate
 	$(MAKE) migrate
+	$(MAKE) mockgen

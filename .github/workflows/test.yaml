@@ -3,12 +3,24 @@ name: test
 on: ["pull_request", "push"]
 jobs:
   test:
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          TZ: Asia/Tokyo
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: example
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping -h localhost" --health-interval 10s --health-timeout 5s --health-retries 5 --tmpfs /var/lib/mysql/:rw,noexec,nosuid,size=600m --tmpfs /tmp/:rw,noexec,nosuid,size=50m
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: 1.17
+      - name: mockgen
+        run: make mockgen
       - name: Test
         run: go test ./...
