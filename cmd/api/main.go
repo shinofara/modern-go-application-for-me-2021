@@ -31,7 +31,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/dig"
-
+	middleware "github.com/deepmap/oapi-codegen/pkg/chi-middleware"
 	"net/http"
 )
 
@@ -105,6 +105,14 @@ func Server(ctx context.Context, p struct {
 	otel.SetTracerProvider(tp)
 
 	r := chi.NewRouter()
+
+	swagger, err := oapi.GetSwagger()
+	if err != nil {
+		log.Printf("failed to get swagger spec: %v\n", err)
+	}
+	swagger.Servers = nil
+
+	r.Use(middleware.OapiRequestValidator(swagger))
 	r.Use(otelmux.Middleware("example", otelmux.WithTracerProvider(tp)))
 	oapi.HandlerFromMux(&p.Mux, r)
 
