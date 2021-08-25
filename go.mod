@@ -4,10 +4,14 @@ go 1.17
 
 require (
 	entgo.io/ent v0.9.1
+	github.com/DATA-DOG/go-txdb v0.1.4
 	github.com/XSAM/otelsql v0.5.0
 	github.com/cosmtrek/air v1.27.3
+	github.com/getsentry/sentry-go v0.11.0
 	github.com/go-chi/chi/v5 v5.0.3
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/golang/mock v1.6.0
+	github.com/rs/zerolog v1.23.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.22.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.22.0
 	go.opentelemetry.io/otel v1.0.0-RC2
@@ -21,16 +25,13 @@ require (
 )
 
 require (
-	github.com/DATA-DOG/go-txdb v0.1.4 // indirect
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
-	github.com/getsentry/sentry-go v0.11.0 // indirect
 	github.com/go-bindata/go-bindata v1.0.1-0.20190711162640-ee3c2418e368 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
-	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
@@ -41,7 +42,6 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pelletier/go-toml v1.8.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rs/zerolog v1.23.0 // indirect
 	github.com/spf13/cobra v1.1.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect

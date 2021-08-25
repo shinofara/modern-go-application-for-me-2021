@@ -19,8 +19,10 @@ mockgen:
 	go run github.com/sanposhiho/gomockhandler@latest -f mockgen
 
 init:
+	docker compose up -d db
 	go get ./...
 	$(MAKE) model
 	$(MAKE) oapi-generate
 	$(MAKE) migrate
 	$(MAKE) mockgen
+	go test ./...

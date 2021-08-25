@@ -59,6 +59,14 @@ GCPであればSecret Managerで管理して、起動時にマウントするな
 
 ## Usage
 
+### 環境構築
+
+```shell
+$ make init
+```
+
+[Makefile](./Makefile)のinitに起動時に行う処理を全て書いてます。
+
 ### モデル関連
 
 [facebook/ent](https://github.com/ent/ent)を利用していますので、マイグレーションの為に別のファイルが存在するなどは無いです。
