@@ -1,9 +1,10 @@
 package database
 
 import (
+	"mygo/ent"
+
 	"github.com/XSAM/otelsql"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
-	"mygo/ent"
 
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/go-sql-driver/mysql"
