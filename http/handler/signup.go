@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/goccy/go-json"
 	"log"
 	"mygo/ent/auth"
 	oapi "mygo/http/oapi"
