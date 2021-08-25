@@ -21,7 +21,7 @@
 REST APIの開発には、[OpenAPI 3.0 ](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.0.md)に準拠する形で開発を進めるため、[deepmap/oapi-codegen](https://github.com/deepmap/oapi-codegen)を利用しました。
 [openapi.yaml](./openapi.yaml)でスキーマ管理を進めて、必要なコードをジェネレートしています。
 
-ジェネレートされたインターフェースや、リクエストオブジェクト等は、[http/oapi](http/oapi)に書き出されます。
+ジェネレートされたインターフェースや、リクエストオブジェクト等は、[http/oapi](openapi/oapi)に書き出されます。
 
 ### HTTP
 

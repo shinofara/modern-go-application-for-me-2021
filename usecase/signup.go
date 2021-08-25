@@ -3,12 +3,11 @@ package usecase
 import (
 	"context"
 	"database/sql"
-
-	"github.com/shinofara/example-go-2021/http/oapi"
+	"github.com/shinofara/example-go-2021/openapi"
 )
 
 // Signup ユーザ登録時に利用
-func (u *UseCase) Signup(ctx context.Context, p *oapi.SignupRequest) error {
+func (u *UseCase) Signup(ctx context.Context, p *openapi.SignupRequest) error {
 	tx, err := u.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/shinofara/example-go-2021/openapi"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,7 +12,6 @@ import (
 	"github.com/shinofara/example-go-2021/config"
 	"github.com/shinofara/example-go-2021/ent"
 	"github.com/shinofara/example-go-2021/http/handler"
-	oapi "github.com/shinofara/example-go-2021/http/oapi"
 	"github.com/shinofara/example-go-2021/infrastructure/database"
 	"github.com/shinofara/example-go-2021/infrastructure/logger"
 	"github.com/shinofara/example-go-2021/infrastructure/mailer"
@@ -29,9 +29,9 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 
+	middleware "github.com/deepmap/oapi-codegen/pkg/chi-middleware"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/dig"
-	middleware "github.com/deepmap/oapi-codegen/pkg/chi-middleware"
 	"net/http"
 )
 
@@ -106,7 +106,7 @@ func Server(ctx context.Context, p struct {
 
 	r := chi.NewRouter()
 
-	swagger, err := oapi.GetSwagger()
+	swagger, err := openapi.GetSwagger()
 	if err != nil {
 		log.Printf("failed to get swagger spec: %v\n", err)
 	}
@@ -114,7 +114,7 @@ func Server(ctx context.Context, p struct {
 
 	r.Use(middleware.OapiRequestValidator(swagger))
 	r.Use(otelmux.Middleware("example", otelmux.WithTracerProvider(tp)))
-	oapi.HandlerFromMux(&p.Mux, r)
+	openapi.HandlerFromMux(&p.Mux, r)
 
 	srv := &http.Server{
 		Handler: otelhttp.NewHandler(r, "server",

@@ -2,10 +2,10 @@ package handler
 
 import (
 	"fmt"
+	"github.com/shinofara/example-go-2021/openapi"
 	"net/http"
 
 	"github.com/goccy/go-json"
-	"github.com/shinofara/example-go-2021/http/oapi"
 )
 
 // GetMyTasks Get: /my_tasks
@@ -23,9 +23,9 @@ func (h *Handler) GetMyTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var tr []oapi.Task
+	var tr []openapi.Task
 	for _, t := range tasks {
-		tr = append(tr, oapi.Task{
+		tr = append(tr, openapi.Task{
 			Title: t.Title,
 		})
 	}
@@ -35,7 +35,7 @@ func (h *Handler) GetMyTasks(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) PostTasks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var p oapi.Task
+	var p openapi.Task
 
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

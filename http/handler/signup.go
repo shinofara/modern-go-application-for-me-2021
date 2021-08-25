@@ -2,17 +2,17 @@ package handler
 
 import (
 	"fmt"
+	"github.com/shinofara/example-go-2021/openapi"
 	"log"
 	"net/http"
 
 	"github.com/goccy/go-json"
 	"github.com/shinofara/example-go-2021/ent/auth"
-	oapi "github.com/shinofara/example-go-2021/http/oapi"
 )
 
 func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var p oapi.SignupRequest
+	var p openapi.SignupRequest
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -29,7 +29,7 @@ func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) PostSignin(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var p oapi.SigninRequest
+	var p openapi.SigninRequest
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

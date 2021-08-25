@@ -4,13 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-
-	"github.com/shinofara/example-go-2021/http/oapi"
+	"github.com/shinofara/example-go-2021/openapi"
 )
 
 // CreateTask タスク作成
 // タスクのDB登録と、タスクassign通知
-func (u *UseCase) CreateTask(ctx context.Context, p *oapi.Task) error {
+func (u *UseCase) CreateTask(ctx context.Context, p *openapi.Task) error {
 	// 一旦意味も無くtransactionで書いてる
 	tx, err := u.db.BeginTx(ctx, nil)
 	if err != nil {
