@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/shinofara/example-go-2021/ent/auth"
 	"github.com/shinofara/example-go-2021/ent/user"
-
-	"entgo.io/ent/dialect/sql"
 )
 
 // User is the model entity for the User schema.

@@ -7,11 +7,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/shinofara/example-go-2021/ent/auth"
-	"github.com/shinofara/example-go-2021/ent/user"
-
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/example-go-2021/ent/user"
 )
 
 // AuthCreate is the builder for creating a Auth entity.

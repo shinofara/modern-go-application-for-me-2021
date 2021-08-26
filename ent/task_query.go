@@ -8,13 +8,12 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/shinofara/example-go-2021/ent/predicate"
-	"github.com/shinofara/example-go-2021/ent/task"
-	"github.com/shinofara/example-go-2021/ent/user"
-
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shinofara/example-go-2021/ent/predicate"
+	"github.com/shinofara/example-go-2021/ent/task"
+	"github.com/shinofara/example-go-2021/ent/user"
 )
 
 // TaskQuery is the builder for querying Task entities.

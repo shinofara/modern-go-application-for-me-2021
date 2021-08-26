@@ -6,6 +6,8 @@ require (
 	entgo.io/ent v0.9.1
 	github.com/DATA-DOG/go-txdb v0.1.4
 	github.com/XSAM/otelsql v0.5.0
+	github.com/deepmap/oapi-codegen v1.8.2
+	github.com/getkin/kin-openapi v0.61.0
 	github.com/getsentry/sentry-go v0.11.0
 	github.com/go-chi/chi/v5 v5.0.3
 	github.com/go-sql-driver/mysql v1.6.0
@@ -25,9 +27,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/deepmap/oapi-codegen v1.8.2 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
-	github.com/getkin/kin-openapi v0.61.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.5 // indirect

@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"database/sql"
+
 	"github.com/shinofara/example-go-2021/openapi"
 )
 

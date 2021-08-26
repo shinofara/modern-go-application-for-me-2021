@@ -6,12 +6,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/shinofara/example-go-2021/ent/auth"
-	"github.com/shinofara/example-go-2021/ent/predicate"
-
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/example-go-2021/ent/predicate"
 )
 
 // AuthDelete is the builder for deleting a Auth entity.

@@ -6,7 +6,6 @@ import (
 	"context"
 
 	"github.com/shinofara/example-go-2021/ent"
-
 	// required by schema hooks.
 	_ "github.com/shinofara/example-go-2021/ent/runtime"
 

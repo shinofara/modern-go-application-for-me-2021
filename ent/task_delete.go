@@ -6,12 +6,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/shinofara/example-go-2021/ent/predicate"
-	"github.com/shinofara/example-go-2021/ent/task"
-
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shinofara/example-go-2021/ent/predicate"
+	"github.com/shinofara/example-go-2021/ent/task"
 )
 
 // TaskDelete is the builder for deleting a Task entity.

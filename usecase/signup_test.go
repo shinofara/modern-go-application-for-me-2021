@@ -3,8 +3,9 @@ package usecase
 import (
 	"context"
 	"errors"
-	"github.com/shinofara/example-go-2021/openapi"
 	"testing"
+
+	"github.com/shinofara/example-go-2021/openapi"
 
 	"github.com/shinofara/example-go-2021/ent/auth"
 	mock_mailer "github.com/shinofara/example-go-2021/mock"

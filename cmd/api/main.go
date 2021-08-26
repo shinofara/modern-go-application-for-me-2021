@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/shinofara/example-go-2021/openapi"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/shinofara/example-go-2021/openapi"
 
 	"github.com/shinofara/example-go-2021/config"
 	"github.com/shinofara/example-go-2021/ent"
@@ -29,10 +30,11 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 
+	"net/http"
+
 	middleware "github.com/deepmap/oapi-codegen/pkg/chi-middleware"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/dig"
-	"net/http"
 )
 
 func main() {

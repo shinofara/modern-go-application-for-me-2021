@@ -7,10 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/shinofara/example-go-2021/ent/task"
 	"github.com/shinofara/example-go-2021/ent/user"
-
-	"entgo.io/ent/dialect/sql"
 )
 
 // Task is the model entity for the Task schema.

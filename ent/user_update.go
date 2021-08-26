@@ -7,14 +7,13 @@ import (
 	"errors"
 	"fmt"
 
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/schema/field"
 	"github.com/shinofara/example-go-2021/ent/auth"
 	"github.com/shinofara/example-go-2021/ent/predicate"
 	"github.com/shinofara/example-go-2021/ent/task"
 	"github.com/shinofara/example-go-2021/ent/user"
-
-	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
-	"entgo.io/ent/schema/field"
 )
 
 // UserUpdate is the builder for updating User entities.

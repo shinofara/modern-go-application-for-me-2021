@@ -2,9 +2,10 @@ package handler
 
 import (
 	"fmt"
-	"github.com/shinofara/example-go-2021/openapi"
 	"log"
 	"net/http"
+
+	"github.com/shinofara/example-go-2021/openapi"
 
 	"github.com/goccy/go-json"
 	"github.com/shinofara/example-go-2021/ent/auth"

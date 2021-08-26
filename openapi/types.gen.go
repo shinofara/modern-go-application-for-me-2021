@@ -38,4 +38,3 @@ type PostSignupJSONRequestBody PostSignupJSONBody
 
 // PostTasksJSONRequestBody defines body for PostTasks for application/json ContentType.
 type PostTasksJSONRequestBody PostTasksJSONBody
-

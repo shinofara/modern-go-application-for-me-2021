@@ -3,10 +3,9 @@
 package user
 
 import (
-	"github.com/shinofara/example-go-2021/ent/predicate"
-
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/shinofara/example-go-2021/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.
