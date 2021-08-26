@@ -9,6 +9,8 @@ db:
 trace:
   jaeger:
     url: http://trace:14268/api/traces
+#  gcp:
+#    project_id: your_gcp_project
 
 logger:
   type: stdout

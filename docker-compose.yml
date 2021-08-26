@@ -22,9 +22,12 @@ services:
     working_dir: /work
     volumes:
     - .:/work
+    - ~/.config/gcloud:/gcloud:ro
     entrypoint: ["go", "run", "github.com/cosmtrek/air@latest", "-c", ".air.toml"]
     ports:
       - 8080:8080
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /gcloud/application_default_credentials.json
 
   trace:
     image: jaegertracing/all-in-one:1
