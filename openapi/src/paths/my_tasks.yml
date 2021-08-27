@@ -5,6 +5,4 @@ get:
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: ../components/Task.yml
+            $ref: ../components/Tasks.yml

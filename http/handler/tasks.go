@@ -12,7 +12,7 @@ import (
 // GetMyTasks Get: /my_tasks
 func (h *Handler) GetMyTasks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	user, err := h.db.User.Get(ctx, 10)
+	user, err := h.db.User.Get(ctx, 16)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
@@ -24,20 +24,21 @@ func (h *Handler) GetMyTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var tr []openapi.Task
+	ts := new(openapi.Tasks)
+	ts.Data = []openapi.Task{}
 	for _, t := range tasks {
-		tr = append(tr, openapi.Task{
-			Title: t.Title,
+		ts.Data = append(ts.Data, openapi.Task{
+			Title:           t.Title,
+			CreatedDateTime: t.CreatedAt,
 		})
 	}
-
-	fmt.Fprint(w, tr)
+	//h.response().setStatus(http.StatusOK).json(w, tr)
+	h.response().json(w, ts)
 }
 
 func (h *Handler) PostTasks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var p openapi.Task
-
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

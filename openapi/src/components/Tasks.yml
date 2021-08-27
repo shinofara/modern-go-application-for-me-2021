@@ -1,0 +1,9 @@
+type: object
+properties:
+  data:
+    type: array
+    nullable: false
+    items:
+      $ref: ./Task.yml
+required:
+  - data

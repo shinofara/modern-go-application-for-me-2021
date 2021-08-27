@@ -2,5 +2,10 @@ type: object
 properties:
   title:
     type: string
+  created_date_time:
+    type: string
+    example: '2020-01-31T23:59:59+09:00'
+    format: date-time
 required:
   - title
+  - created_date_time

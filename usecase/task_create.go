@@ -25,7 +25,7 @@ func (u *UseCase) CreateTask(ctx context.Context, p *openapi.Task) error {
 		}
 	}()
 
-	user, err := tx.User.Get(ctx, 10)
+	user, err := tx.User.Get(ctx, 16)
 	if err != nil {
 		return err
 	}

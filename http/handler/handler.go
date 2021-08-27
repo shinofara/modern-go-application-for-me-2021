@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/shinofara/modern-go-application-for-me-2021/ent"
 	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/mailer"
 	"github.com/shinofara/modern-go-application-for-me-2021/repository"
 	"github.com/shinofara/modern-go-application-for-me-2021/usecase"
 
+	"github.com/goccy/go-json"
 	"go.uber.org/dig"
 )
 
@@ -30,4 +33,32 @@ func NewHandler(p struct {
 		useCase:    p.UseCase,
 		repository: p.Repository,
 	}
+}
+
+type response struct {
+	status int
+}
+
+func (Handler) response() *response {
+	return &response{
+		status: http.StatusOK,
+	}
+}
+
+func (r response) setStatus(s int) *response {
+	rr := r
+	rr.status = s
+	return &rr
+}
+
+func (r response) json(w http.ResponseWriter, a interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+
+	j, err := json.Marshal(a)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(j)
 }
