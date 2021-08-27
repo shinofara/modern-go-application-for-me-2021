@@ -24,5 +24,7 @@ jobs:
         run: make oapi-generate
       - name: mockgen
         run: make mockgen
+      - name: build
+        run: go build cmd/api/main.go
       - name: Test
         run: go test ./...

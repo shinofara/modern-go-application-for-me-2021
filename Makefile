@@ -25,9 +25,9 @@ mockgen:
 
 init:
 	docker compose up -d db
+	$(MAKE) oapi-generate
 	go get ./...
 	$(MAKE) model
-	$(MAKE) oapi-generate
 	$(MAKE) migrate
 	$(MAKE) mockgen
 	go test ./...
