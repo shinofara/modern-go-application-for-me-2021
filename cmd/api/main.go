@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"go.opentelemetry.io/otel/propagation"
 	"os"
 	"os/signal"
 	"syscall"
@@ -22,7 +23,6 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -95,6 +95,7 @@ func Server(ctx context.Context, p struct {
 	}()
 
 	tp := tracesdk.NewTracerProvider(
+		tracesdk.WithSampler(tracesdk.AlwaysSample()),
 		// Always be sure to batch in production.
 		tracesdk.WithBatcher(p.TraceExporter),
 		// Record information about this application in an Resource.
@@ -104,7 +105,14 @@ func Server(ctx context.Context, p struct {
 			attribute.String("environment", "development"),
 		)),
 	)
+	defer func() {
+		if err := tp.Shutdown(ctx); err != nil {
+			log.Err(err).Msg("")
+		}
+	}()
+
 	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
 	r := chi.NewRouter()
 
@@ -115,12 +123,17 @@ func Server(ctx context.Context, p struct {
 	swagger.Servers = nil
 
 	r.Use(middleware.OapiRequestValidator(swagger))
-	r.Use(otelmux.Middleware("example", otelmux.WithTracerProvider(tp)))
-	openapi.HandlerFromMux(&p.Mux, r)
+	rr := openapi.HandlerFromMux(&p.Mux, r)
 
 	srv := &http.Server{
-		Handler: otelhttp.NewHandler(r, "server",
-			otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
+		Handler: otelhttp.NewHandler(rr, "",
+			otelhttp.WithSpanNameFormatter(func(operation string, r *http.Request) string{
+				return r.Method + ": " + r.URL.Path
+			}),
+			otelhttp.WithMessageEvents(
+				otelhttp.ReadEvents,
+				otelhttp.WriteEvents,
+				),
 		),
 		Addr: "0.0.0.0:8080",
 	}
