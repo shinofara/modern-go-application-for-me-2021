@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/shinofara/example-go-2021/openapi"
+	"github.com/shinofara/modern-go-application-for-me-2021/openapi"
 )
 
 // CreateTask タスク作成

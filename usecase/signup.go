@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/shinofara/example-go-2021/openapi"
+	"github.com/shinofara/modern-go-application-for-me-2021/openapi"
 )
 
 // Signup ユーザ登録時に利用

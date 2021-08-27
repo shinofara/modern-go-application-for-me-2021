@@ -3,14 +3,15 @@ package usecase
 import (
 	"context"
 	"errors"
-	"github.com/shinofara/example-go-2021/infrastructure/mock/mock_mailer"
 	"testing"
 
-	"github.com/shinofara/example-go-2021/openapi"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/mock/mock_mailer"
 
-	"github.com/shinofara/example-go-2021/ent/auth"
-	"github.com/shinofara/example-go-2021/repository"
-	"github.com/shinofara/example-go-2021/testsupport/mysql"
+	"github.com/shinofara/modern-go-application-for-me-2021/openapi"
+
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/auth"
+	"github.com/shinofara/modern-go-application-for-me-2021/repository"
+	"github.com/shinofara/modern-go-application-for-me-2021/testsupport/mysql"
 
 	"github.com/golang/mock/gomock"
 )

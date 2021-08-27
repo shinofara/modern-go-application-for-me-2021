@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shinofara/example-go-2021/ent/predicate"
-	"github.com/shinofara/example-go-2021/ent/user"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/predicate"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/user"
 )
 
 // UserDelete is the builder for deleting a User entity.

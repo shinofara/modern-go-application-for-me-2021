@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/shinofara/example-go-2021/ent"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent"
 )
 
 // The AuthFunc type is an adapter to allow the use of ordinary

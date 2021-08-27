@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/shinofara/example-go-2021/ent"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent"
 )
 
 type Repository struct {

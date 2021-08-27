@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/shinofara/example-go-2021/openapi"
+	"github.com/shinofara/modern-go-application-for-me-2021/openapi"
 
 	"github.com/goccy/go-json"
-	"github.com/shinofara/example-go-2021/ent/auth"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/auth"
 )
 
 func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {

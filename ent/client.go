@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/shinofara/example-go-2021/ent/migrate"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/migrate"
 
-	"github.com/shinofara/example-go-2021/ent/auth"
-	"github.com/shinofara/example-go-2021/ent/task"
-	"github.com/shinofara/example-go-2021/ent/user"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/auth"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/task"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/user"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"

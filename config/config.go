@@ -3,9 +3,9 @@ package config
 import (
 	"os"
 
-	"github.com/shinofara/example-go-2021/infrastructure/database"
-	"github.com/shinofara/example-go-2021/infrastructure/logger"
-	"github.com/shinofara/example-go-2021/infrastructure/trace"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/database"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/logger"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/trace"
 
 	"go.uber.org/dig"
 

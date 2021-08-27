@@ -1,4 +1,4 @@
-module github.com/shinofara/example-go-2021
+module github.com/shinofara/modern-go-application-for-me-2021
 
 go 1.17
 

@@ -6,10 +6,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/shinofara/example-go-2021/config"
-	"github.com/shinofara/example-go-2021/ent"
-	"github.com/shinofara/example-go-2021/ent/migrate"
-	"github.com/shinofara/example-go-2021/infrastructure/database"
+	"github.com/shinofara/modern-go-application-for-me-2021/config"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/migrate"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/database"
 )
 
 func main() {

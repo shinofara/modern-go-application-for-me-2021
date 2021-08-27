@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/shinofara/example-go-2021/ent/task"
-	"github.com/shinofara/example-go-2021/ent/user"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/task"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/user"
 )
 
 // Task is the model entity for the Task schema.

@@ -5,9 +5,9 @@ import (
 	"log"
 	"testing"
 
-	"github.com/shinofara/example-go-2021/ent"
-	"github.com/shinofara/example-go-2021/ent/migrate"
-	"github.com/shinofara/example-go-2021/infrastructure/database"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/migrate"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/database"
 
 	"github.com/DATA-DOG/go-txdb"
 

@@ -8,9 +8,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/shinofara/example-go-2021/ent/auth"
-	"github.com/shinofara/example-go-2021/ent/task"
-	"github.com/shinofara/example-go-2021/ent/user"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/auth"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/task"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/user"
 )
 
 // ent aliases to avoid import conflicts in user's code.

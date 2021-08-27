@@ -5,7 +5,7 @@ package user
 import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/shinofara/example-go-2021/ent/predicate"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

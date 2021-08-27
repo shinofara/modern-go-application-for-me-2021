@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/shinofara/example-go-2021/ent/auth"
-	"github.com/shinofara/example-go-2021/ent/predicate"
-	"github.com/shinofara/example-go-2021/ent/task"
-	"github.com/shinofara/example-go-2021/ent/user"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/auth"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/predicate"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/task"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent/user"
 
 	"entgo.io/ent"
 )

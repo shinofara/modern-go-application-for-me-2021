@@ -1,15 +1,15 @@
 package trace
 
 import (
+	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
-	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 )
 
 type Config struct {
 	Jaeger *Jaeger
-	GCP *GCP
+	GCP    *GCP
 }
 
 type Jaeger struct {

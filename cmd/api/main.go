@@ -3,23 +3,24 @@ package main
 import (
 	"context"
 	"flag"
-	"go.opentelemetry.io/otel/propagation"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/shinofara/example-go-2021/openapi"
+	"go.opentelemetry.io/otel/propagation"
 
-	"github.com/shinofara/example-go-2021/config"
-	"github.com/shinofara/example-go-2021/ent"
-	"github.com/shinofara/example-go-2021/http/handler"
-	"github.com/shinofara/example-go-2021/infrastructure/database"
-	"github.com/shinofara/example-go-2021/infrastructure/logger"
-	"github.com/shinofara/example-go-2021/infrastructure/mailer"
-	"github.com/shinofara/example-go-2021/infrastructure/trace"
-	"github.com/shinofara/example-go-2021/repository"
-	"github.com/shinofara/example-go-2021/usecase"
+	"github.com/shinofara/modern-go-application-for-me-2021/openapi"
+
+	"github.com/shinofara/modern-go-application-for-me-2021/config"
+	"github.com/shinofara/modern-go-application-for-me-2021/ent"
+	"github.com/shinofara/modern-go-application-for-me-2021/http/handler"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/database"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/logger"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/mailer"
+	"github.com/shinofara/modern-go-application-for-me-2021/infrastructure/trace"
+	"github.com/shinofara/modern-go-application-for-me-2021/repository"
+	"github.com/shinofara/modern-go-application-for-me-2021/usecase"
 
 	"github.com/rs/zerolog/log"
 
@@ -127,13 +128,13 @@ func Server(ctx context.Context, p struct {
 
 	srv := &http.Server{
 		Handler: otelhttp.NewHandler(rr, "",
-			otelhttp.WithSpanNameFormatter(func(operation string, r *http.Request) string{
+			otelhttp.WithSpanNameFormatter(func(operation string, r *http.Request) string {
 				return r.Method + ": " + r.URL.Path
 			}),
 			otelhttp.WithMessageEvents(
 				otelhttp.ReadEvents,
 				otelhttp.WriteEvents,
-				),
+			),
 		),
 		Addr: "0.0.0.0:8080",
 	}
