@@ -1,12 +1,12 @@
 {
 	"mocks": {
-		"mock/mail.go": {
+		"infrastructure/mock/mock_mailer/mail.go": {
 			"checksum": "sIxES3L97iiDrfVjAL+paQ==",
 			"source_checksum": "Kt3DbEhnqwZnB4cC5BDmMg==",
 			"mode": "SOURCE_MODE",
 			"source_mode_runner": {
 				"source": "infrastructure/mailer/mail.go",
-				"destination": "mock/mail.go"
+				"destination": "infrastructure/mock/mock_mailer/mail.go"
 			}
 		}
 	}

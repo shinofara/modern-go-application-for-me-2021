@@ -3,12 +3,12 @@ package usecase
 import (
 	"context"
 	"errors"
+	"github.com/shinofara/example-go-2021/infrastructure/mock/mock_mailer"
 	"testing"
 
 	"github.com/shinofara/example-go-2021/openapi"
 
 	"github.com/shinofara/example-go-2021/ent/auth"
-	mock_mailer "github.com/shinofara/example-go-2021/mock"
 	"github.com/shinofara/example-go-2021/repository"
 	"github.com/shinofara/example-go-2021/testsupport/mysql"
 
@@ -21,6 +21,7 @@ func TestUseCase_Signup(t *testing.T) {
 	ctx := context.Background()
 
 	ctrl := gomock.NewController(t)
+
 	m := mock_mailer.NewMockMailerInterface(ctrl)
 	m.EXPECT().Send("test1@example.com", "Hello").Return(nil)
 	m.EXPECT().Send("test2@example.com", "Hello").Return(errors.New("send error"))
