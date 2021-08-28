@@ -1,0 +1,21 @@
+steps:
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: 'bash'
+  args:
+  - '-ce'
+  - |
+    gcloud alpha builds submit --pack image=asia.gcr.io/$PROJECT_ID/modern-go-application:${COMMIT_SHA}
+    gcloud container images add-tag asia.gcr.io/$PROJECT_ID/modern-go-application:${COMMIT_SHA} \
+                                    asia.gcr.io/$PROJECT_ID/modern-go-application:${BRANCH_NAME} \
+                                    asia.gcr.io/$PROJECT_ID/modern-go-application:latest
+
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: 'bash'
+  args:
+  - '-ce'
+  - |
+    gcloud run deploy modern-go-application \
+      --platform=managed \
+      --image=asia.gcr.io/$PROJECT_ID/modern-go-application:${COMMIT_SHA} \
+      --region=asia-northeast1 --project=$PROJECT_ID \
+      --args="--config=/workspace/environment/development/config.yml"

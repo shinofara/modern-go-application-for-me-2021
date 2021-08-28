@@ -2,7 +2,7 @@ oapi-merge:
 	@docker run --rm -v "${PWD}/openapi/src:/w" -w /w openapitools/openapi-generator-cli generate \
 	-g openapi-yaml -i openapi.yaml -o generated
 
-oapi-generate: oapi-merge
+oapi-generate:
 	@go run github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest -generate types -package openapi openapi/src/generated/openapi/openapi.yaml > openapi/types.gen.go;
 	@go run github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest -generate chi-server -package openapi openapi/src/generated/openapi/openapi.yaml > openapi/server.gen.go
 	@go run github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest -generate spec -package openapi openapi/src/generated/openapi/openapi.yaml > openapi/spec.gen.go
