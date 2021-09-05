@@ -16,12 +16,39 @@
 
 ## 設計
 
-### Open API
+### レイヤーの考え方
 
-REST APIの開発には、[OpenAPI 3.0 ](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.0.md)に準拠する形で開発を進めるため、[deepmap/oapi-codegen](https://github.com/deepmap/oapi-codegen)を利用しました。
-[openapi.yaml](./openapi.yaml)でスキーマ管理を進めて、必要なコードをジェネレートしています。
+当リポジトリでのレイヤー設計は大きく分けると下記の通りとなります。
+DDDとかClean Architectureで考えられているArchitectureを参考にして、最低限これくらいかなという分け方にしてます。
 
-ジェネレートされたインターフェースや、リクエストオブジェクト等は、[http/oapi](openapi/oapi)に書き出されます。
+| レイヤ | 責務 | 該当ディレクトリ |
+| ---------------- |----------------------------------------------------------------- | ------------------------------------ |
+| Application      | ユーザとの接点やアプリケーションとして行いたい振る舞いに関心を持つ          | - http<br> - usecase<br>  - openapi  |
+| Domain           | Applicationが何であるかを意思する事無く、ドメイン処理にただただ関心を持つ  | - repository<br> - ent               | 
+| Infrastructure   | DBや外部サービスなどApplicationやDomain処理が関係する世界との関係を作る   | - infrastructure                     |
+| Config           | 当リポジトリ内で環境毎に変化させたい設定値などを管理                      | - config<br> - environment           |
+
+### 各ディレクトリの説明
+
+| ディレクトリ      | 責務                                                                                                                                                 | 依存                        |
+| --------------- |---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| openapi/src     | [OpenAPI 3.0](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.0.md)に準拠するREST APIのスキーマ管理                                 | -                          |
+| openapi         | [openapi.yml](openapi/src/openapi.yaml)を元に[deepmap/oapi-codegen](https://github.com/deepmap/oapi-codegen)で生成された `*.gen.go` ファイルが置かれる場所 | -                          |
+| http            | HTTP Applicationに関する関心事を管理                                                                                                                    |                            | 
+| http/handler    | HTTP Applicationのroute毎に呼び出されるhandler処理を管理。handlerはrequestを受け取り、そしてresponseを返すことが仕事。                                          | usecase, repository        |
+| usecase         | usecaseにはアプリケーションのケース単位で処理を集約します                                                                                                    | repository, infrastructure |
+| repository      | 当リポジトリ内で環境毎に変化させたい設定値などを管理                                                                                                         | infrastructure              |
+| ent             | DBスキーマに関する管理と操作、そしてその結果ORMを提供します                                                                                                  |
+| infrastructure  | 外部とのコミュニケーションを行う為に利用。可能な限りinterface化して、テストなどではmockを利用できるように                                                           |
+| config          | configはApplication/Infrastructureレイヤで発生する環境毎の値や秘密情報などを管理                                                                             |
+| environment     | 当リポジトリ内で環境毎に変化させたい設定値などを管理。environmentで使用できる値は、configで設定してるものに限る                                                     |
+
+#### Open API
+
+REST APIの開発には、[OpenAPI 3.0](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.0.md)に準拠する形で開発を進めるため、[deepmap/oapi-codegen](https://github.com/deepmap/oapi-codegen)を利用しました。
+[openapi.yaml](./openapi/src/openapi.yaml)でスキーマ管理を進めて、必要なコードをジェネレートしています。
+
+ジェネレートされたインターフェースや、リクエストオブジェクト等は、[openapi](./openapi)に書き出されます。
 
 ### HTTP
 
