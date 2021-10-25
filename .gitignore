@@ -1,4 +1,3 @@
 tmp
 mock
-openapi/*.go
 openapi/src/generated
