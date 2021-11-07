@@ -2,6 +2,8 @@ package handler
 
 import (
 	"fmt"
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
 	"log"
 	"net/http"
 
@@ -17,6 +19,28 @@ func (h *Handler) PostSignup(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	var errs []error
+
+	errs = append(errs,validation.Validate(p.Email,
+		validation.Required,
+		is.Email,
+	))
+	errs = append(errs,validation.Validate(p.Password,
+		validation.Required,
+		validation.Length(4, 100),
+	))
+	errs = append(errs,validation.Validate(p.Name,
+		validation.Required,
+	))
+
+	for _, err := range errs {
+		if err != nil {
+			log.Println(err)
+			fmt.Fprint(w, err)
+			return
+		}
 	}
 
 	if err := h.useCase.Signup(ctx, &p); err != nil {
