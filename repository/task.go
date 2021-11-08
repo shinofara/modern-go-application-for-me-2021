@@ -10,7 +10,7 @@ type Repository struct {
 	DB *ent.Client
 }
 
-func NewRepository(db *ent.Client) *Repository {
+func New(db *ent.Client) *Repository {
 	return &Repository{
 		DB: db,
 	}

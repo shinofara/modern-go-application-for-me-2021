@@ -41,7 +41,7 @@ type Config struct {
 
 type Logger struct{}
 
-func NewLogger(cfg *Config) *Logger {
+func New(cfg *Config) *Logger {
 	if cfg.Type != "json" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
 	}

@@ -33,7 +33,6 @@ import (
 
 	"net/http"
 
-	middleware "github.com/deepmap/oapi-codegen/pkg/chi-middleware"
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/dig"
 )
@@ -48,7 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	l := logger.NewLogger(cfg.Logger)
+	l := logger.New(cfg.Logger)
 	sh, err := logger.NewSentryHook()
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
@@ -61,8 +60,8 @@ func main() {
 	provides := []interface{}{
 		context.Background,
 		mailer.NewDummyMailer,
-		handler.NewHandler,
-		repository.NewRepository,
+		handler.New,
+		repository.New,
 		usecase.NewUseCase,
 		database.NewClient,
 		cfg.Clone,
@@ -116,14 +115,6 @@ func Server(ctx context.Context, p struct {
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
 	r := chi.NewRouter()
-
-	swagger, err := openapi.GetSwagger()
-	if err != nil {
-		log.Printf("failed to get swagger spec: %v\n", err)
-	}
-	swagger.Servers = nil
-
-	r.Use(middleware.OapiRequestValidator(swagger))
 	rr := openapi.HandlerFromMux(&p.Mux, r)
 
 	srv := &http.Server{
