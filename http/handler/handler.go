@@ -19,7 +19,7 @@ type Handler struct {
 	repository *repository.Repository
 }
 
-func NewHandler(p struct {
+func New(p struct {
 	dig.In
 
 	DB         *ent.Client

@@ -26,7 +26,7 @@ func TestUseCase_Signup(t *testing.T) {
 	m := mock_mailer.NewMockMailerInterface(ctrl)
 	m.EXPECT().Send("test1@example.com", "Hello").Return(nil)
 	m.EXPECT().Send("test2@example.com", "Hello").Return(errors.New("send error"))
-	repo := repository.NewRepository(client)
+	repo := repository.New(client)
 
 	uc := &UseCase{
 		db:         client,
